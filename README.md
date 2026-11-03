@@ -21,6 +21,7 @@ A working prototype of an AI-enabled decision-support tool for **authorised fron
 |---|---|---|
 | 1 Intake form | Employee records the affected person's account plus structured fields | `src/app/page.tsx` |
 | 2 Intake agent | Extracts a standardised **case record**; flags missing / conflicting / uncertain info; assigns preliminary **urgency** and **vulnerability** indicators | `src/lib/agents/intake.ts` |
+| 2b Clarification loop | If information is missing and the case is not high urgency, the workflow **returns to the employee** with the questions to ask; their answers go back through extraction (max 2 rounds). High-urgency cases skip the wait and are fast-tracked. | `src/lib/pipeline.ts`, `src/app/page.tsx` |
 | 3 Router | **Deterministic rules** decide which specialists to activate and apply an **access-control policy** so each specialist sees only permitted fields. Writes a disclosure log. High urgency is *fast-tracked*, not bypassed. | `src/lib/router.ts` |
 | 4 Specialists | Banking / Telecom / Digital-platform agents each analyse their filtered view against their own synthetic guidance, citing guidance ids and reporting confidence | `src/lib/agents/specialist.ts`, `src/lib/guidance/` |
 | 5 Coordinator | Merges findings, surfaces conflicts and low-confidence items for human review, prioritises actions, drafts wording for the affected person, and builds per-organisation **handover records** using the same access policy | `src/lib/agents/coordinator.ts` |
@@ -46,7 +47,7 @@ The app is a standard Next.js project and deploys to Vercel. Set `ANTHROPIC_API_
 ## Repo layout
 
 ```
-src/app/            UI + API route
+src/app/            UI + API routes (/api/intake, /api/analyse)
 src/lib/types.ts    data contracts for every stage
 src/lib/router.ts   routing rules + access policy
 src/lib/agents/     intake, specialist, coordinator prompts

@@ -47,6 +47,7 @@ Never invent details. Use "unknown"/null/empty arrays when unsure.`;
 export async function runIntake(
   report: ScamReport,
   caseId: string,
+  clarifications?: string,
 ): Promise<CaseRecord> {
   const user = `caseId: ${caseId}
 Reporting organisation: ${report.reportingOrganisation}
@@ -65,7 +66,16 @@ Structured fields recorded by the employee:
 Employee's free-text account of the incident:
 """
 ${report.description}
-"""`;
+"""${
+    clarifications?.trim()
+      ? `
+
+Clarifications the employee obtained from the affected person after an earlier extraction (treat as authoritative where they resolve a gap, and remove the corresponding item from missingInformation):
+"""
+${clarifications.trim()}
+"""`
+      : ""
+  }`;
 
   const record = await askForJson<CaseRecord>({
     model: MODELS.primary,

@@ -20,6 +20,10 @@ Source: the team workflow diagram ("INFS5706 Group Workflow rough.drawio") plus 
 - **LLM where language is the problem**: extracting structure from free text, reasoning against guidance, drafting plain-English wording.
 - **Rules where trust is the problem**: which agents run, which fields each may see, what leaves the organisation in a handover. These are deterministic, logged and unit-tested. The sensitive-data boundary should not depend on a model's judgement.
 
+## The clarification loop
+
+Implemented as drawn: after the intake agent runs, if `missingInformation` is non-empty and urgency is not high, the UI pauses on a clarification screen listing what to ask the affected person. The employee records the answers and the report is re-extracted with those answers treated as authoritative; the case id is preserved. Capped at 2 rounds so an employee is never blocked, and the employee can always choose to proceed without. The intake decision is shown on the review screen so it is auditable.
+
 ## Decisions that differ from the first diagram
 
 1. **High urgency fast-tracks rather than ends the workflow.** An ongoing scam is when the employee needs the consolidated recommendation most. The router flags `fastTrack=true`; the coordinator prioritises stop-harm actions first.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { IntakeResult } from "@/lib/pipeline";
 import { SAMPLE_CASES } from "@/lib/sampleCases";
 import type {
   ContactMethod,
@@ -44,47 +45,92 @@ const EMPTY: ScamReport = {
   description: "",
 };
 
+type Phase =
+  | { kind: "idle" }
+  | { kind: "intake" }
+  | { kind: "clarify"; intake: IntakeResult; report: ScamReport }
+  | { kind: "analysing"; intake: IntakeResult }
+  | { kind: "done"; result: PipelineResult; intake: IntakeResult };
+
+async function postJson<T>(url: string, body: unknown): Promise<T> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error ?? "Request failed");
+  return json as T;
+}
+
 export default function Home() {
   const [report, setReport] = useState<ScamReport>(EMPTY);
   const [disclosed, setDisclosed] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<PipelineResult | null>(null);
+
+  const busy = phase.kind === "intake" || phase.kind === "analysing";
 
   function loadSample(i: number) {
     const r = SAMPLE_CASES[i].report;
     setReport(r);
     setDisclosed(r.informationDisclosed.join(", "));
-    setResult(null);
+    setPhase({ kind: "idle" });
     setError(null);
   }
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    const body: ScamReport = {
+  function currentReport(): ScamReport {
+    return {
       ...report,
       informationDisclosed: disclosed
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
     };
+  }
+
+  /** Stage 2. Pauses at the clarification screen if the record has gaps. */
+  async function runIntake(
+    r: ScamReport,
+    opts: { caseId?: string; clarifications?: string; round?: number } = {},
+  ) {
+    setPhase({ kind: "intake" });
+    setError(null);
     try {
-      const res = await fetch("/api/analyse", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+      const intake = await postJson<IntakeResult>("/api/intake", {
+        report: r,
+        ...opts,
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Request failed");
-      setResult(json as PipelineResult);
+      if (intake.needsClarification) {
+        setPhase({ kind: "clarify", intake, report: r });
+      } else {
+        await runAnalysis(intake);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
+      setPhase({ kind: "idle" });
     }
+  }
+
+  /** Stages 3–5. */
+  async function runAnalysis(intake: IntakeResult) {
+    setPhase({ kind: "analysing", intake });
+    setError(null);
+    try {
+      const result = await postJson<PipelineResult>("/api/analyse", {
+        caseRecord: intake.caseRecord,
+        timingMs: intake.timingMs,
+      });
+      setPhase({ kind: "done", result, intake });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setPhase({ kind: "idle" });
+    }
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    await runIntake(currentReport());
   }
 
   return (
@@ -223,10 +269,14 @@ export default function Home() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={busy || phase.kind === "clarify"}
             className="w-full rounded bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
           >
-            {loading ? "Analysing…" : "Submit for AI-assisted analysis"}
+            {phase.kind === "intake"
+              ? "Structuring report…"
+              : phase.kind === "analysing"
+                ? "Analysing…"
+                : "Submit for AI-assisted analysis"}
           </button>
           {error && (
             <p className="rounded border border-red-300 bg-red-50 p-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
@@ -236,21 +286,209 @@ export default function Home() {
         </form>
 
         <section>
-          {loading && (
-            <div className="space-y-2 text-sm text-zinc-500">
-              <p>Running intake → routing → specialists → coordinator…</p>
-              <p className="text-xs">Typically 15–40 seconds.</p>
-            </div>
-          )}
-          {result && <ReviewPanel result={result} />}
-          {!loading && !result && (
+          <StageTracker phase={phase} />
+
+          {phase.kind === "idle" && (
             <p className="text-sm text-zinc-500">
               Load a sample case or fill in the form, then submit.
             </p>
           )}
+
+          {phase.kind === "intake" && (
+            <p className="text-sm text-zinc-500">
+              Intake agent is extracting a standardised case record…
+            </p>
+          )}
+
+          {phase.kind === "clarify" && (
+            <ClarificationPanel
+              intake={phase.intake}
+              onResubmit={(clarifications) =>
+                runIntake(phase.report, {
+                  caseId: phase.intake.caseRecord.caseId,
+                  clarifications,
+                  round: phase.intake.round + 1,
+                })
+              }
+              onProceed={() => runAnalysis(phase.intake)}
+            />
+          )}
+
+          {phase.kind === "analysing" && (
+            <div className="space-y-2 text-sm text-zinc-500">
+              <p>Routing → specialists → coordinator…</p>
+              <p className="text-xs">Typically 15–30 seconds.</p>
+            </div>
+          )}
+
+          {phase.kind === "done" && (
+            <>
+              {phase.intake.clarificationReason && (
+                <p className="mb-3 rounded border border-zinc-200 bg-zinc-50 p-2 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+                  Intake decision: {phase.intake.clarificationReason}
+                </p>
+              )}
+              <ReviewPanel result={phase.result} />
+            </>
+          )}
         </section>
       </div>
     </main>
+  );
+}
+
+/** Shows where the case is in the six-stage workflow. */
+function StageTracker({ phase }: { phase: Phase }) {
+  const stages = [
+    "Intake",
+    "Intake agent",
+    "Clarify",
+    "Routing",
+    "Specialists",
+    "Coordinator",
+    "Human review",
+  ];
+  const active: Record<Phase["kind"], number> = {
+    idle: 0,
+    intake: 1,
+    clarify: 2,
+    analysing: 4,
+    done: 6,
+  };
+  const idx = active[phase.kind];
+  const skippedClarify =
+    (phase.kind === "analysing" || phase.kind === "done") &&
+    !phase.intake.clarificationReason?.includes("returned to the employee");
+  return (
+    <ol className="mb-4 flex flex-wrap gap-1 text-[11px]">
+      {stages.map((s, i) => {
+        const state =
+          i < idx || (i === idx && phase.kind === "done")
+            ? "done"
+            : i === idx
+              ? "active"
+              : "todo";
+        const dim = i === 2 && skippedClarify;
+        return (
+          <li
+            key={s}
+            className={`rounded px-2 py-0.5 ${
+              state === "done"
+                ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                : state === "active"
+                  ? "border border-zinc-900 font-medium dark:border-zinc-100"
+                  : "border border-zinc-200 text-zinc-400 dark:border-zinc-800"
+            } ${dim ? "line-through opacity-50" : ""}`}
+            title={dim ? "Clarification not required for this case" : undefined}
+          >
+            {i + 1}. {s}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+/**
+ * The "Need more info" loop from the workflow diagram. The AI lists what it
+ * could not establish; the employee asks the affected person, records the
+ * answers, and sends the report back through extraction. They can also
+ * choose to proceed without — that is their call, not the AI's.
+ */
+function ClarificationPanel({
+  intake,
+  onResubmit,
+  onProceed,
+}: {
+  intake: IntakeResult;
+  onResubmit: (clarifications: string) => void;
+  onProceed: () => void;
+}) {
+  const [text, setText] = useState("");
+  const c = intake.caseRecord;
+  return (
+    <div className="space-y-4 text-sm">
+      <div className="rounded border border-amber-300 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/40">
+        <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-300">
+          Returned for clarification (round {intake.round})
+        </h3>
+        <p className="text-xs text-amber-900 dark:text-amber-200">
+          {intake.clarificationReason}
+        </p>
+      </div>
+
+      <div className="rounded border border-zinc-200 p-3 dark:border-zinc-800">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+          Please ask the affected person
+        </h3>
+        <ul className="list-disc space-y-1 pl-5">
+          {c.missingInformation.map((m) => (
+            <li key={m}>{m}</li>
+          ))}
+        </ul>
+        {c.conflictingInformation.length > 0 && (
+          <>
+            <h4 className="mt-3 text-xs font-medium text-zinc-500">
+              Conflicts to resolve
+            </h4>
+            <ul className="list-disc space-y-1 pl-5">
+              {c.conflictingInformation.map((m) => (
+                <li key={m}>{m}</li>
+              ))}
+            </ul>
+          </>
+        )}
+        {c.uncertainInformation.length > 0 && (
+          <>
+            <h4 className="mt-3 text-xs font-medium text-zinc-500">
+              Uncertain
+            </h4>
+            <ul className="list-disc space-y-1 pl-5">
+              {c.uncertainInformation.map((m) => (
+                <li key={m}>{m}</li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+
+      <div className="rounded border border-zinc-200 p-3 dark:border-zinc-800">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+          Preliminary record (urgency: {c.indicators.urgency})
+        </h3>
+        <p>{c.summary}</p>
+      </div>
+
+      <label className="block">
+        <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+          Answers obtained from the affected person
+        </span>
+        <textarea
+          className="input min-h-28"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="e.g. Transfer was made at 10:40am today by bank transfer to a domestic BSB. She confirms she did not give her card number."
+        />
+      </label>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={text.trim().length < 5}
+          onClick={() => onResubmit(text)}
+          className="rounded bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+        >
+          Add clarifications and re-extract
+        </button>
+        <button
+          type="button"
+          onClick={onProceed}
+          className="rounded border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+        >
+          Proceed without — information unavailable
+        </button>
+      </div>
+    </div>
   );
 }
 
