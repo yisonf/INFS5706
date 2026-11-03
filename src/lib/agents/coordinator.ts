@@ -64,7 +64,7 @@ ${REFERRAL_DIRECTORY.map((r) => `- ${r.organisationType}: ${r.when}`).join("\n")
     model: MODELS.primary,
     system: SYSTEM,
     user,
-    maxTokens: 3000,
+    maxTokens: 8000,
   });
 
   // Handover records are built deterministically from the router's access

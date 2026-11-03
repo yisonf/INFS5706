@@ -46,7 +46,7 @@ Return JSON:
     model: MODELS.specialist,
     system,
     user: `Partial case record (access-filtered):\n${JSON.stringify(view, null, 2)}`,
-    maxTokens: 1500,
+    maxTokens: 4000,
   });
   finding.agent = agent;
   return finding;

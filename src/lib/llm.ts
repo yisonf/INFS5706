@@ -33,10 +33,10 @@ export async function askForJson<T>(opts: {
 }): Promise<T> {
   const res = await getClient().messages.create({
     model: opts.model,
-    max_tokens: opts.maxTokens ?? 2048,
+    max_tokens: opts.maxTokens ?? 6000,
     system:
       opts.system +
-      "\n\nRespond with a single JSON object and nothing else — no prose, no markdown fences.",
+      "\n\nRespond with a single JSON object and nothing else — no prose, no markdown fences. Keep each string concise (one or two sentences); prefer more short items over fewer long ones.",
     messages: [{ role: "user", content: opts.user }],
   });
 
@@ -46,11 +46,23 @@ export async function askForJson<T>(opts: {
     .join("")
     .trim();
 
+  if (res.stop_reason === "max_tokens") {
+    throw new Error(
+      `Model response was truncated at ${opts.maxTokens ?? 6000} output tokens (model ${opts.model}). Increase maxTokens for this stage.`,
+    );
+  }
+
   // Be tolerant of stray fences or leading text.
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
   if (start === -1 || end === -1) {
     throw new Error(`Model did not return JSON: ${text.slice(0, 200)}`);
   }
-  return JSON.parse(text.slice(start, end + 1)) as T;
+  try {
+    return JSON.parse(text.slice(start, end + 1)) as T;
+  } catch (err) {
+    throw new Error(
+      `Model returned malformed JSON (${err instanceof Error ? err.message : String(err)}): ${text.slice(0, 200)}`,
+    );
+  }
 }
