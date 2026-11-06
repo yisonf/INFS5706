@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { newEvent, type AuditEvent } from "@/lib/audit";
+import { combineClarifications } from "@/lib/clarifications";
 import type { IntakeResult } from "@/lib/pipeline";
 import { SAMPLE_CASES } from "@/lib/sampleCases";
 import type {
@@ -46,12 +47,17 @@ const EMPTY: ScamReport = {
   description: "",
 };
 
-type IntakeOpts = { caseId?: string; clarifications?: string; round?: number };
+/**
+ * `answers` holds every clarification the employee has entered for this case,
+ * one entry per round. Each re-extraction starts from the original report, so
+ * all of them are sent every time (see lib/clarifications.ts).
+ */
+type IntakeOpts = { caseId?: string; answers?: string[]; round?: number };
 
 /** What to resend if the employee clicks Retry (DEF-12). */
 type FailedStep =
   | { step: "intake"; report: ScamReport; opts: IntakeOpts }
-  | { step: "analyse"; intake: IntakeResult };
+  | { step: "analyse"; intake: IntakeResult; answers: string[] };
 
 type Phase =
   | { kind: "idle" }
@@ -60,11 +66,12 @@ type Phase =
       kind: "clarify";
       intake: IntakeResult;
       report: ScamReport;
+      answers: string[];
       /** Set when an employee sent the case back or re-opened it (DEF-05). */
       reopened?: { reason: string; mode: "sent_back" | "correction" };
     }
   | { kind: "analysing"; intake: IntakeResult }
-  | { kind: "done"; result: PipelineResult; intake: IntakeResult }
+  | { kind: "done"; result: PipelineResult; intake: IntakeResult; answers: string[] }
   | { kind: "error"; message: string; retryable: boolean; failed: FailedStep };
 
 class ApiError extends Error {
@@ -152,18 +159,21 @@ export default function Home() {
     if (inFlight.current) return;
     inFlight.current = true;
     setPhase({ kind: "intake" });
+    const answers = opts.answers ?? [];
     try {
       const intake = await postJson<IntakeResult>("/api/intake", {
         report: r,
-        ...opts,
+        caseId: opts.caseId,
+        round: opts.round,
+        clarifications: combineClarifications(answers),
       });
       const caseId = intake.caseRecord.caseId;
       audit(
         newEvent({
           caseId,
           actor: "employee",
-          action: opts.clarifications ? "clarification_provided" : "intake_submitted",
-          detail: opts.clarifications
+          action: answers.length > 0 ? "clarification_provided" : "intake_submitted",
+          detail: answers.length > 0
             ? `Round ${intake.round}: clarifications added and report re-extracted.`
             : `Round ${intake.round}: report submitted for AI-assisted analysis.`,
         }),
@@ -177,7 +187,7 @@ export default function Home() {
             detail: `${intake.caseRecord.missingInformation.length} item(s) missing; urgency ${intake.caseRecord.indicators.urgency}.`,
           }),
         );
-        setPhase({ kind: "clarify", intake, report: r });
+        setPhase({ kind: "clarify", intake, report: r, answers });
       } else {
         if (intake.clarificationReason?.includes("fast-tracked")) {
           audit(
@@ -189,7 +199,7 @@ export default function Home() {
             }),
           );
         }
-        await runAnalysis(intake);
+        await runAnalysis(intake, answers);
       }
     } catch (err) {
       const { message, retryable } = describeError(err);
@@ -206,7 +216,7 @@ export default function Home() {
   }
 
   /** Stages 3–5. */
-  async function runAnalysis(intake: IntakeResult) {
+  async function runAnalysis(intake: IntakeResult, answers: string[] = []) {
     if (inFlight.current && phase.kind === "analysing") return;
     inFlight.current = true;
     setPhase({ kind: "analysing", intake });
@@ -224,14 +234,14 @@ export default function Home() {
           detail: `Specialists: ${result.routing.activatedAgents.join(", ") || "none"}; urgency ${result.assessment.urgency}; ${result.assessment.handovers.length} handover(s) prepared (locked).`,
         }),
       );
-      setPhase({ kind: "done", result, intake });
+      setPhase({ kind: "done", result, intake, answers });
     } catch (err) {
       const { message, retryable } = describeError(err);
       setPhase({
         kind: "error",
         message,
         retryable,
-        failed: { step: "analyse", intake },
+        failed: { step: "analyse", intake, answers },
       });
     } finally {
       inFlight.current = false;
@@ -240,11 +250,11 @@ export default function Home() {
 
   function retry(failed: FailedStep) {
     if (failed.step === "intake") return runIntake(failed.report, failed.opts);
-    return runAnalysis(failed.intake);
+    return runAnalysis(failed.intake, failed.answers);
   }
 
   /** Employee chose to proceed without clarifying — recorded (DEF-05). */
-  function skipClarification(intake: IntakeResult, reason: string) {
+  function skipClarification(intake: IntakeResult, reason: string, answers: string[]) {
     audit(
       newEvent({
         caseId: intake.caseRecord.caseId,
@@ -254,18 +264,20 @@ export default function Home() {
         detail: `${intake.caseRecord.missingInformation.length} item(s) still missing.`,
       }),
     );
-    return runAnalysis(intake);
+    return runAnalysis(intake, answers);
   }
 
   /**
    * "Send back" or "Correct information" from the review screen: re-open the
    * case at the clarification step under the same case id, with the original
-   * report, so the employee can add what was missing (DEF-05).
+   * report and every clarification already given, so the employee can add
+   * what was missing without losing earlier answers (DEF-05).
    */
   function reopen(
     intake: IntakeResult,
     mode: "sent_back" | "correction",
     reason: string,
+    answers: string[],
   ) {
     if (mode === "correction") {
       audit(
@@ -281,6 +293,7 @@ export default function Home() {
       kind: "clarify",
       intake: { ...intake, needsClarification: true },
       report: currentReport(),
+      answers,
       reopened: { reason, mode },
     });
   }
@@ -525,11 +538,11 @@ export default function Home() {
               onResubmit={(clarifications) =>
                 runIntake(phase.report, {
                   caseId: phase.intake.caseRecord.caseId,
-                  clarifications,
+                  answers: [...phase.answers, clarifications],
                   round: phase.intake.round + 1,
                 })
               }
-              onProceed={(reason) => skipClarification(phase.intake, reason)}
+              onProceed={(reason) => skipClarification(phase.intake, reason, phase.answers)}
             />
           )}
 
@@ -561,8 +574,8 @@ export default function Home() {
                 result={phase.result}
                 audit={auditByCase[phase.result.caseRecord.caseId] ?? []}
                 onAudit={audit}
-                onSendBack={(reason) => reopen(phase.intake, "sent_back", reason)}
-                onCorrect={(reason) => reopen(phase.intake, "correction", reason)}
+                onSendBack={(reason) => reopen(phase.intake, "sent_back", reason, phase.answers)}
+                onCorrect={(reason) => reopen(phase.intake, "correction", reason, phase.answers)}
               />
             </>
           )}
