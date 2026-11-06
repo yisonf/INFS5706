@@ -1,0 +1,964 @@
+{
+ "trace": {
+  "rounds": [
+   {
+    "status": 200,
+    "dt": 6.1,
+    "resp": {
+     "caseRecord": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "channels": [
+       "social_media"
+      ],
+      "scamType": "investment",
+      "financialLoss": {
+       "reported": true,
+       "amountAud": 18500,
+       "paymentMethod": null
+      },
+      "compromisedInformation": [
+       "driver licence photo"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "pending_fee_payment_demanded_today",
+        "identity_document_disclosed",
+        "continued_scammer_contact",
+        "withdrawal_blocked_by_fee_demand"
+       ],
+       "vulnerability": [
+        "distress",
+        "under pressure from the scammer"
+       ],
+       "telecomRisk": false
+      },
+      "missingInformation": [
+       "dates, times and amounts of each of the four transfers",
+       "payment method used for each transfer",
+       "destination BSB/account numbers, PayIDs or payee names for each transfer",
+       "whether the fee payment has been made or is scheduled",
+       "whether any crypto wallet or exchange account was used and wallet addresses",
+       "whether remote-access software was installed on any device",
+       "whether any platform or account credentials were shared",
+       "whether the member has accounts or logins on the platform and what details were entered",
+       "whether the driver licence was used to open accounts or has been reported",
+       "whether the member has other identity documents or banking details disclosed",
+       "screenshots of the Instagram chats, WhatsApp messages and platform dashboard",
+       "whether the WhatsApp contact is the same person as the Instagram adviser",
+       "whether the member has previously been targeted by scams"
+      ],
+      "conflictingInformation": [],
+      "uncertainInformation": [
+       "total transfer amount is described as 'about' $18,500 rather than exact",
+       "WhatsApp is stated as a contact channel but is not recorded in the structured contact method field",
+       "whether the Instagram adviser and the WhatsApp contact are the same person is not stated",
+       "member asked that family not be told; whether he is isolated or simply embarrassed is not established"
+      ],
+      "entities": {
+       "phoneNumbers": [
+        "+61 400 000 001"
+       ],
+       "urls": [
+        "tradeprofit-example.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [
+        "@crypto.gains.example"
+       ],
+       "organisationsImpersonated": []
+      }
+     },
+     "needsClarification": false,
+     "clarificationReason": "Information is missing, but the case is high urgency — fast-tracked without waiting for clarification.",
+     "round": 1,
+     "urgencyRulesFired": [
+      "URG-01 employee marked incident as ongoing",
+      "URG-04 financial loss reported",
+      "URG-05 identity document disclosed"
+     ],
+     "timingMs": {
+      "intake": 5975
+     },
+     "usage": {
+      "intake": {
+       "inputTokens": 1574,
+       "outputTokens": 799
+      }
+     }
+    }
+   }
+  ],
+  "analyse": {
+   "status": 200,
+   "dt": 26.6
+  }
+ },
+ "res": {
+  "caseRecord": {
+   "caseId": "SSA-20261106-5ZOM",
+   "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+   "channels": [
+    "social_media"
+   ],
+   "scamType": "investment",
+   "financialLoss": {
+    "reported": true,
+    "amountAud": 18500,
+    "paymentMethod": null
+   },
+   "compromisedInformation": [
+    "driver licence photo"
+   ],
+   "incidentOngoing": true,
+   "indicators": {
+    "urgency": "high",
+    "urgencyReasons": [
+     "incident_ongoing",
+     "pending_fee_payment_demanded_today",
+     "identity_document_disclosed",
+     "continued_scammer_contact",
+     "withdrawal_blocked_by_fee_demand"
+    ],
+    "vulnerability": [
+     "distress",
+     "under pressure from the scammer"
+    ],
+    "telecomRisk": false
+   },
+   "missingInformation": [
+    "dates, times and amounts of each of the four transfers",
+    "payment method used for each transfer",
+    "destination BSB/account numbers, PayIDs or payee names for each transfer",
+    "whether the fee payment has been made or is scheduled",
+    "whether any crypto wallet or exchange account was used and wallet addresses",
+    "whether remote-access software was installed on any device",
+    "whether any platform or account credentials were shared",
+    "whether the member has accounts or logins on the platform and what details were entered",
+    "whether the driver licence was used to open accounts or has been reported",
+    "whether the member has other identity documents or banking details disclosed",
+    "screenshots of the Instagram chats, WhatsApp messages and platform dashboard",
+    "whether the WhatsApp contact is the same person as the Instagram adviser",
+    "whether the member has previously been targeted by scams"
+   ],
+   "conflictingInformation": [],
+   "uncertainInformation": [
+    "total transfer amount is described as 'about' $18,500 rather than exact",
+    "WhatsApp is stated as a contact channel but is not recorded in the structured contact method field",
+    "whether the Instagram adviser and the WhatsApp contact are the same person is not stated",
+    "member asked that family not be told; whether he is isolated or simply embarrassed is not established"
+   ],
+   "entities": {
+    "phoneNumbers": [
+     "+61 400 000 001"
+    ],
+    "urls": [
+     "tradeprofit-example.example"
+    ],
+    "bankAccounts": [],
+    "onlineHandles": [
+     "@crypto.gains.example"
+    ],
+    "organisationsImpersonated": []
+   }
+  },
+  "routing": {
+   "activatedAgents": [
+    "banking",
+    "telecom",
+    "digital_platform"
+   ],
+   "rulesFired": [
+    "BANK-01 financial loss reported",
+    "BANK-03 investment or payment-redirect scam type",
+    "TEL-02 scammer phone numbers identified",
+    "DIG-01 scammer contacted via social media, website or email",
+    "DIG-02 URLs or online handles identified",
+    "DIG-03 identity theft or identity documents disclosed"
+   ],
+   "needsHumanJudgement": false,
+   "filteredViews": {
+    "banking": {
+     "caseId": "SSA-20261106-5ZOM",
+     "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+     "scamType": "investment",
+     "financialLoss": {
+      "reported": true,
+      "amountAud": 18500,
+      "paymentMethod": null
+     },
+     "compromisedInformation": [
+      "driver licence photo"
+     ],
+     "incidentOngoing": true,
+     "indicators": {
+      "urgency": "high",
+      "urgencyReasons": [
+       "incident_ongoing",
+       "pending_fee_payment_demanded_today",
+       "identity_document_disclosed",
+       "continued_scammer_contact",
+       "withdrawal_blocked_by_fee_demand"
+      ],
+      "vulnerability": [
+       "distress",
+       "under pressure from the scammer"
+      ],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [],
+      "urls": [],
+      "bankAccounts": [],
+      "onlineHandles": [],
+      "organisationsImpersonated": []
+     }
+    },
+    "telecom": {
+     "caseId": "SSA-20261106-5ZOM",
+     "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+     "scamType": "investment",
+     "channels": [
+      "social_media"
+     ],
+     "incidentOngoing": true,
+     "indicators": {
+      "urgency": "high",
+      "urgencyReasons": [
+       "incident_ongoing",
+       "pending_fee_payment_demanded_today",
+       "identity_document_disclosed",
+       "continued_scammer_contact",
+       "withdrawal_blocked_by_fee_demand"
+      ],
+      "vulnerability": [
+       "distress",
+       "under pressure from the scammer"
+      ],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [
+       "+61 400 000 001"
+      ],
+      "urls": [],
+      "bankAccounts": [],
+      "onlineHandles": [],
+      "organisationsImpersonated": []
+     }
+    },
+    "digital_platform": {
+     "caseId": "SSA-20261106-5ZOM",
+     "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+     "scamType": "investment",
+     "channels": [
+      "social_media"
+     ],
+     "compromisedInformation": [
+      "driver licence photo"
+     ],
+     "incidentOngoing": true,
+     "indicators": {
+      "urgency": "high",
+      "urgencyReasons": [
+       "incident_ongoing",
+       "pending_fee_payment_demanded_today",
+       "identity_document_disclosed",
+       "continued_scammer_contact",
+       "withdrawal_blocked_by_fee_demand"
+      ],
+      "vulnerability": [
+       "distress",
+       "under pressure from the scammer"
+      ],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [],
+      "urls": [
+       "tradeprofit-example.example"
+      ],
+      "bankAccounts": [],
+      "onlineHandles": [
+       "@crypto.gains.example"
+      ],
+      "organisationsImpersonated": []
+     }
+    }
+   },
+   "disclosureLog": [
+    {
+     "agent": "banking",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "financialLoss",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.bankAccounts",
+      "entities.organisationsImpersonated"
+     ]
+    },
+    {
+     "agent": "telecom",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.phoneNumbers",
+      "entities.organisationsImpersonated"
+     ]
+    },
+    {
+     "agent": "digital_platform",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ]
+    }
+   ],
+   "fastTrack": true
+  },
+  "findings": [
+   {
+    "agent": "banking",
+    "risks": [
+     "Transfers may be ongoing or pending, and the member is still in contact with the scammer who is demanding a fee today [BK-G1]",
+     "Repeated transfers over about six weeks match the investment scam pattern [BK-G4]",
+     "A fee demand to release funds is a second-wave scam indicator [BK-G4]",
+     "Driver licence photo was disclosed, which creates identity-misuse risk outside the banking guidance",
+     "Member is distressed and under pressure from the scammer, indicating vulnerability [BK-G5]"
+    ],
+    "recommendedNextSteps": [
+     "Advise the member to stop all further payments immediately, including the fee, and flag the case to the fraud team for a hold request; do not initiate the hold yourself [BK-G1]",
+     "Ask for the date, amount and payee of each transfer, and whether all went to the same payee [BK-G3][BK-G4]",
+     "Raise a recall request with the fraud team for any completed domestic transfer, prioritising those within the last 24 hours [BK-G3]",
+     "Ask whether the member has been asked to pay a fee to release funds and whether any earlier fees were paid [BK-G4]",
+     "Ask whether banking logins, card details, PINs or one-time codes were shared, and if so arrange an immediate reset through official channels and consider card re-issue [BK-G2]",
+     "Refer the member to the financial-hardship team and the identity-recovery/victim-support partner given distress and large loss [BK-G5]"
+    ],
+    "missingInformation": [
+     "Payment method and sending account details for each transfer",
+     "Dates, amounts and payee account details for each transfer",
+     "Whether any transfers are pending or still processing",
+     "Whether banking credentials, card details, PINs or one-time codes were disclosed",
+     "No specific guidance on handling a disclosed driver licence photo; identity-document response needs checking outside this guidance",
+     "Member's financial circumstances to assess whether the loss is large relative to them"
+    ],
+    "guidanceCited": [
+     "BK-G1",
+     "BK-G2",
+     "BK-G3",
+     "BK-G4",
+     "BK-G5"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "Core banking guidance covers the transfers, fee demand and vulnerability, but payment details are missing and no guidance addresses the disclosed driver licence photo."
+   },
+   {
+    "agent": "telecom",
+    "risks": [
+     "Scammer contact number +61 400 000 001 may be used to pressure the member for a fee payment today.",
+     "Identity documentation was sent to the scammer, which could enable SIM-swap or port-out attempts; no service disruption has been reported.",
+     "Ongoing daily contact indicates the scammer may use calls or messages beyond social media, which is not confirmed."
+    ],
+    "recommendedNextSteps": [
+     "Record +61 400 000 001 exactly as provided and lodge it with the telco scam-reporting channel for blocking assessment [TL-G1].",
+     "Ask the member whether he has received any calls or SMS from the scammer, and record the originating number or sender ID exactly as received [TL-G1].",
+     "Ask whether he has lost mobile service, received porting or SIM-change messages, or been asked for a verification code; if yes, treat as potential SIM-swap and urge immediate carrier contact to place a port-out lock and check for account changes [TL-G2].",
+     "Ask whether the scammer asked him to install software or share his screen; if yes, advise disconnecting the device from the internet and referring it to the digital-platform/IT partner before any further banking use [TL-G4]."
+    ],
+    "missingInformation": [
+     "Whether the scammer contacted the member by phone call or SMS, or only through social media.",
+     "Whether the member has experienced any mobile service loss or unexpected porting or SIM-change messages.",
+     "Whether remote-access software was installed or a screen was shared.",
+     "Whether the phone number is linked to the member's own account or was only used by the scammer.",
+     "Guidance on handling misuse of disclosed identity documents is not covered by the telecom guidance; defer to other agents."
+    ],
+    "guidanceCited": [
+     "TL-G1",
+     "TL-G2",
+     "TL-G4"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "Telecom-specific indicators are limited to one phone number and an unconfirmed SIM-swap exposure, so the telecom guidance applies only conditionally."
+   },
+   {
+    "agent": "digital_platform",
+    "risks": [
+     "Driver licence photo disclosed to scammer, creating identity-theft exposure",
+     "Ongoing scammer contact and daily fee demands could lead to further payments or additional disclosures",
+     "Fake investment platform may still be live and reachable by the member",
+     "Social media handle may be a fake adviser profile that could target other people"
+    ],
+    "recommendedNextSteps": [
+     "Record the URL tradeprofit-example.example exactly as provided and submit it to the platform/host abuse channel for takedown assessment [DP-G1]",
+     "Advise the member not to revisit the URL or log in to the platform [DP-G1]",
+     "Confirm whether the member's social media account or any credentials were shared, and if so, recommend a password reset, two-factor authentication, and a session review [DP-G2]",
+     "Ask the member to preserve screenshots of the @crypto.gains.example profile and all messages, then report the handle through the platform's impersonation process [DP-G3]",
+     "Refer the member to the identity-recovery partner because the driver licence photo was disclosed [DP-G4]",
+     "Advise the member to arrange a credit-ban or credit-report check through the appropriate agency [DP-G4]",
+     "Warn the member that any contacts who may have received messages from his accounts should be alerted [DP-G2]"
+    ],
+    "missingInformation": [
+     "Whether the member shared any account login credentials or passwords",
+     "Whether the member's social media account has been accessed or used by the scammer",
+     "Whether the @crypto.gains.example handle impersonates a real person or organisation",
+     "Screenshots or exact copies of the profile, messages and platform pages",
+     "Whether any other identity documents (passport, Medicare) were shared besides the driver licence",
+     "Whether the member has any active sessions or recovery details linked to the platform account"
+    ],
+    "guidanceCited": [
+     "DP-G1",
+     "DP-G2",
+     "DP-G3",
+     "DP-G4"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "Guidance covers the URL, handle and identity-document elements, but does not address the investment fraud, fee demand or payment recovery, which fall outside this agent's scope."
+   }
+  ],
+  "assessment": {
+   "caseId": "SSA-20261106-5ZOM",
+   "scamSummary": "Suspected investment scam. The member met an 'adviser' on social media about six weeks ago and made several transfers (about $18,500 AUD) to an online platform. When he tried to withdraw apparent gains he was told to pay a fee first, which is a common second-wave pattern. He also sent a driver licence photo, and the scammer is messaging him daily to pay the fee today.",
+   "urgency": "high",
+   "priorityRationale": "The incident is ongoing, with a fee payment demanded today and daily pressure on a distressed member. Money may still be recoverable, and an identity document has been disclosed.",
+   "recommendedActions": [
+    {
+     "action": "Advise the member not to make any further payments, including the demanded fee, and not to reply to the scammer for now.",
+     "owner": "Frontline employee",
+     "priority": 1
+    },
+    {
+     "action": "Escalate immediately to the fraud team to request a hold on any pending or scheduled payments. The restriction on initiating a hold applies to the AI, not to the employee.",
+     "owner": "Fraud team via employee",
+     "priority": 2
+    },
+    {
+     "action": "Ask the member whether the fee has been paid or scheduled, and whether any transfers are still processing.",
+     "owner": "Frontline employee",
+     "priority": 3
+    },
+    {
+     "action": "Collect the date, amount, payment method and payee details of each transfer, then ask the fraud team to raise recall requests, starting with the most recent.",
+     "owner": "Fraud team via employee",
+     "priority": 4
+    },
+    {
+     "action": "Ask whether banking logins, card details, PINs, one-time codes or any platform or social media credentials were shared. If so, arrange resets through official channels and consider card re-issue.",
+     "owner": "Frontline employee",
+     "priority": 5
+    },
+    {
+     "action": "Ask whether the scammer had him install software or share his screen. If so, advise disconnecting the device from the internet and refer it to the IT/digital-platform partner before any further banking use.",
+     "owner": "Frontline employee",
+     "priority": 6
+    },
+    {
+     "action": "Ask whether he has lost mobile service or received porting, SIM-change or verification-code messages. If so, treat as a potential SIM-swap and urge immediate carrier contact for a port-out lock.",
+     "owner": "Frontline employee",
+     "priority": 7
+    },
+    {
+     "action": "Ask what other identity documents or banking details were shared, and arrange identity-protection steps such as a credit report check or credit ban through the appropriate agency.",
+     "owner": "Frontline employee",
+     "priority": 8
+    },
+    {
+     "action": "Ask the member to keep screenshots of the Instagram and WhatsApp chats, the @crypto.gains.example profile and the platform dashboard, and not to visit or log in to the platform URL.",
+     "owner": "Frontline employee",
+     "priority": 9
+    },
+    {
+     "action": "Record +61 400 000 001, tradeprofit-example.example and @crypto.gains.example exactly as provided. Submit the number to the telco scam-reporting channel, the URL to the host/platform abuse channel, and the handle to the platform's impersonation or report process.",
+     "owner": "Frontline employee with relevant teams",
+     "priority": 10
+    },
+    {
+     "action": "Refer the member to the financial-hardship team given the large loss and distress, subject to checking his circumstances.",
+     "owner": "Frontline employee",
+     "priority": 11
+    }
+   ],
+   "referrals": [
+    {
+     "organisationType": "Government scam-reporting service",
+     "reason": "Strongly suspected investment scam with financial loss, for national reporting and trend data."
+    },
+    {
+     "organisationType": "Identity-recovery / victim-support organisation",
+     "reason": "A driver licence photo was disclosed and the member is distressed."
+    },
+    {
+     "organisationType": "Community support organisation",
+     "reason": "Vulnerability indicators are present (distress, pressure from the scammer, possible isolation or embarrassment)."
+    },
+    {
+     "organisationType": "Law enforcement",
+     "reason": "Only if organisation policy requires reporting for a loss of this size; the employee should check the policy."
+    }
+   ],
+   "risksAndUnresolvedIssues": [
+    "A fee payment may be made today under pressure, adding to the loss.",
+    "Recovery chances fall with time, and payment methods and payee details for the transfers are unknown.",
+    "The disclosed driver licence photo creates identity-misuse risk, and no specialist guidance covers its handling.",
+    "SIM-swap exposure is possible but unconfirmed.",
+    "Remote-access software, credential sharing and crypto wallet use are all unknown.",
+    "The member asked that family not be told, and it is unclear whether he is isolated or embarrassed.",
+    "The total of about $18,500 is approximate and the number of transfers is unconfirmed.",
+    "It is unknown whether the Instagram adviser and the WhatsApp contact are the same person.",
+    "The fake profile and platform may be targeting other people."
+   ],
+   "itemsRequiringHumanReview": [
+    "The banking, telecom and digital platform specialists all reported medium confidence, so their findings need employee verification.",
+    "No specialist guidance covers a disclosed driver licence photo. The employee should confirm the organisation's identity-compromise process.",
+    "Telecom SIM-swap and remote-access risks apply only if the member confirms the relevant indicators.",
+    "The banking specialist suggested a financial-hardship team referral. This is not in the referral directory, so the employee should confirm whether and how to use it.",
+    "The employee should decide whether the loss meets the organisation's threshold for a law enforcement report.",
+    "The employee should decide how to respect the member's wish not to tell family, and whether a support person is appropriate with his consent.",
+    "The WhatsApp channel is not in the structured contact field, and the +61 400 000 001 number needs its channel and ownership confirmed."
+   ],
+   "suggestedCommunicationToAffectedPerson": "Thank you for telling us. You've done the right thing by reaching out. This may be a scam, so please don't send any more money today, including the fee. We're going to ask our fraud team to look at your payments and see what can be done. Could you share the details of each transfer and keep your messages and screenshots? We can also point you to free support to help protect your identity. We won't contact your family without your say-so.",
+   "handovers": [
+    {
+     "organisationType": "banking",
+     "label": "Bank / payment provider",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "financialLoss",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.bankAccounts",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "scamType": "investment",
+      "financialLoss": {
+       "reported": true,
+       "amountAud": 18500,
+       "paymentMethod": null
+      },
+      "compromisedInformation": [
+       "driver licence photo"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "pending_fee_payment_demanded_today",
+        "identity_document_disclosed",
+        "continued_scammer_contact",
+        "withdrawal_blocked_by_fee_demand"
+       ],
+       "vulnerability": [
+        "distress",
+        "under pressure from the scammer"
+       ],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": []
+      },
+      "specialistFinding": {
+       "agent": "banking",
+       "risks": [
+        "Transfers may be ongoing or pending, and the member is still in contact with the scammer who is demanding a fee today [BK-G1]",
+        "Repeated transfers over about six weeks match the investment scam pattern [BK-G4]",
+        "A fee demand to release funds is a second-wave scam indicator [BK-G4]",
+        "Driver licence photo was disclosed, which creates identity-misuse risk outside the banking guidance",
+        "Member is distressed and under pressure from the scammer, indicating vulnerability [BK-G5]"
+       ],
+       "recommendedNextSteps": [
+        "Advise the member to stop all further payments immediately, including the fee, and flag the case to the fraud team for a hold request; do not initiate the hold yourself [BK-G1]",
+        "Ask for the date, amount and payee of each transfer, and whether all went to the same payee [BK-G3][BK-G4]",
+        "Raise a recall request with the fraud team for any completed domestic transfer, prioritising those within the last 24 hours [BK-G3]",
+        "Ask whether the member has been asked to pay a fee to release funds and whether any earlier fees were paid [BK-G4]",
+        "Ask whether banking logins, card details, PINs or one-time codes were shared, and if so arrange an immediate reset through official channels and consider card re-issue [BK-G2]",
+        "Refer the member to the financial-hardship team and the identity-recovery/victim-support partner given distress and large loss [BK-G5]"
+       ],
+       "missingInformation": [
+        "Payment method and sending account details for each transfer",
+        "Dates, amounts and payee account details for each transfer",
+        "Whether any transfers are pending or still processing",
+        "Whether banking credentials, card details, PINs or one-time codes were disclosed",
+        "No specific guidance on handling a disclosed driver licence photo; identity-document response needs checking outside this guidance",
+        "Member's financial circumstances to assess whether the loss is large relative to them"
+       ],
+       "guidanceCited": [
+        "BK-G1",
+        "BK-G2",
+        "BK-G3",
+        "BK-G4",
+        "BK-G5"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "Core banking guidance covers the transfers, fee demand and vulnerability, but payment details are missing and no guidance addresses the disclosed driver licence photo."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "telecom",
+     "label": "Telecommunications provider",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.phoneNumbers",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "scamType": "investment",
+      "channels": [
+       "social_media"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "pending_fee_payment_demanded_today",
+        "identity_document_disclosed",
+        "continued_scammer_contact",
+        "withdrawal_blocked_by_fee_demand"
+       ],
+       "vulnerability": [
+        "distress",
+        "under pressure from the scammer"
+       ],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [
+        "+61 400 000 001"
+       ],
+       "urls": [],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": []
+      },
+      "specialistFinding": {
+       "agent": "telecom",
+       "risks": [
+        "Scammer contact number +61 400 000 001 may be used to pressure the member for a fee payment today.",
+        "Identity documentation was sent to the scammer, which could enable SIM-swap or port-out attempts; no service disruption has been reported.",
+        "Ongoing daily contact indicates the scammer may use calls or messages beyond social media, which is not confirmed."
+       ],
+       "recommendedNextSteps": [
+        "Record +61 400 000 001 exactly as provided and lodge it with the telco scam-reporting channel for blocking assessment [TL-G1].",
+        "Ask the member whether he has received any calls or SMS from the scammer, and record the originating number or sender ID exactly as received [TL-G1].",
+        "Ask whether he has lost mobile service, received porting or SIM-change messages, or been asked for a verification code; if yes, treat as potential SIM-swap and urge immediate carrier contact to place a port-out lock and check for account changes [TL-G2].",
+        "Ask whether the scammer asked him to install software or share his screen; if yes, advise disconnecting the device from the internet and referring it to the digital-platform/IT partner before any further banking use [TL-G4]."
+       ],
+       "missingInformation": [
+        "Whether the scammer contacted the member by phone call or SMS, or only through social media.",
+        "Whether the member has experienced any mobile service loss or unexpected porting or SIM-change messages.",
+        "Whether remote-access software was installed or a screen was shared.",
+        "Whether the phone number is linked to the member's own account or was only used by the scammer.",
+        "Guidance on handling misuse of disclosed identity documents is not covered by the telecom guidance; defer to other agents."
+       ],
+       "guidanceCited": [
+        "TL-G1",
+        "TL-G2",
+        "TL-G4"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "Telecom-specific indicators are limited to one phone number and an unconfirmed SIM-swap exposure, so the telecom guidance applies only conditionally."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "digital_platform",
+     "label": "Digital platform",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "scamType": "investment",
+      "channels": [
+       "social_media"
+      ],
+      "compromisedInformation": [
+       "driver licence photo"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "pending_fee_payment_demanded_today",
+        "identity_document_disclosed",
+        "continued_scammer_contact",
+        "withdrawal_blocked_by_fee_demand"
+       ],
+       "vulnerability": [
+        "distress",
+        "under pressure from the scammer"
+       ],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [
+        "tradeprofit-example.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [
+        "@crypto.gains.example"
+       ],
+       "organisationsImpersonated": []
+      },
+      "specialistFinding": {
+       "agent": "digital_platform",
+       "risks": [
+        "Driver licence photo disclosed to scammer, creating identity-theft exposure",
+        "Ongoing scammer contact and daily fee demands could lead to further payments or additional disclosures",
+        "Fake investment platform may still be live and reachable by the member",
+        "Social media handle may be a fake adviser profile that could target other people"
+       ],
+       "recommendedNextSteps": [
+        "Record the URL tradeprofit-example.example exactly as provided and submit it to the platform/host abuse channel for takedown assessment [DP-G1]",
+        "Advise the member not to revisit the URL or log in to the platform [DP-G1]",
+        "Confirm whether the member's social media account or any credentials were shared, and if so, recommend a password reset, two-factor authentication, and a session review [DP-G2]",
+        "Ask the member to preserve screenshots of the @crypto.gains.example profile and all messages, then report the handle through the platform's impersonation process [DP-G3]",
+        "Refer the member to the identity-recovery partner because the driver licence photo was disclosed [DP-G4]",
+        "Advise the member to arrange a credit-ban or credit-report check through the appropriate agency [DP-G4]",
+        "Warn the member that any contacts who may have received messages from his accounts should be alerted [DP-G2]"
+       ],
+       "missingInformation": [
+        "Whether the member shared any account login credentials or passwords",
+        "Whether the member's social media account has been accessed or used by the scammer",
+        "Whether the @crypto.gains.example handle impersonates a real person or organisation",
+        "Screenshots or exact copies of the profile, messages and platform pages",
+        "Whether any other identity documents (passport, Medicare) were shared besides the driver licence",
+        "Whether the member has any active sessions or recovery details linked to the platform account"
+       ],
+       "guidanceCited": [
+        "DP-G1",
+        "DP-G2",
+        "DP-G3",
+        "DP-G4"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "Guidance covers the URL, handle and identity-document elements, but does not address the investment fraud, fee demand or payment recovery, which fall outside this agent's scope."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "government_reporting",
+     "label": "Government scam-reporting service",
+     "reason": "Strongly suspected investment scam with financial loss, for national reporting and trend data.",
+     "fieldsShared": [
+      "caseId",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "entities.phoneNumbers",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "scamType": "investment",
+      "channels": [
+       "social_media"
+      ],
+      "incidentOngoing": true,
+      "entities": {
+       "phoneNumbers": [
+        "+61 400 000 001"
+       ],
+       "urls": [
+        "tradeprofit-example.example"
+       ],
+       "onlineHandles": [
+        "@crypto.gains.example"
+       ],
+       "organisationsImpersonated": []
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "identity_recovery",
+     "label": "Identity-recovery / victim-support organisation",
+     "reason": "A driver licence photo was disclosed and the member is distressed.",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "compromisedInformation",
+      "indicators.urgency",
+      "indicators.vulnerability"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "scamType": "investment",
+      "compromisedInformation": [
+       "driver licence photo"
+      ],
+      "indicators": {
+       "urgency": "high",
+       "vulnerability": [
+        "distress",
+        "under pressure from the scammer"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "community_support",
+     "label": "Community support organisation",
+     "reason": "Vulnerability indicators are present (distress, pressure from the scammer, possible isolation or embarrassment).",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "indicators.urgency",
+      "indicators.vulnerability"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "indicators": {
+       "urgency": "high",
+       "vulnerability": [
+        "distress",
+        "under pressure from the scammer"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "law_enforcement",
+     "label": "Law enforcement",
+     "reason": "Only if organisation policy requires reporting for a loss of this size; the employee should check the policy.",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "financialLoss",
+      "compromisedInformation",
+      "incidentOngoing",
+      "entities.phoneNumbers",
+      "entities.urls",
+      "entities.bankAccounts",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-5ZOM",
+      "summary": "A member reports meeting an adviser through social media about six weeks ago and making several transfers to an online investment platform. When he tried to withdraw apparent gains, he was told to pay a fee first. He previously sent a photo of identity documentation for verification and is being messaged daily to pay the fee today.",
+      "scamType": "investment",
+      "channels": [
+       "social_media"
+      ],
+      "financialLoss": {
+       "reported": true,
+       "amountAud": 18500,
+       "paymentMethod": null
+      },
+      "compromisedInformation": [
+       "driver licence photo"
+      ],
+      "incidentOngoing": true,
+      "entities": {
+       "phoneNumbers": [
+        "+61 400 000 001"
+       ],
+       "urls": [
+        "tradeprofit-example.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [
+        "@crypto.gains.example"
+       ],
+       "organisationsImpersonated": []
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    }
+   ],
+   "disclaimer": "AI-generated recommendation for review by an authorised frontline employee. The employee is responsible for verifying, communicating with the affected person and initiating any action within their authority. This tool has not confirmed that a scam occurred and has taken no action."
+  },
+  "timingMs": {
+   "intake": 5975,
+   "routing": 0,
+   "specialists": 6487,
+   "coordinator": 19911
+  },
+  "usage": {
+   "intake": {
+    "inputTokens": 1574,
+    "outputTokens": 799
+   },
+   "specialist:banking": {
+    "inputTokens": 1339,
+    "outputTokens": 1220
+   },
+   "specialist:telecom": {
+    "inputTokens": 1224,
+    "outputTokens": 1223
+   },
+   "specialist:digital_platform": {
+    "inputTokens": 1235,
+    "outputTokens": 1102
+   },
+   "coordinator": {
+    "inputTokens": 4397,
+    "outputTokens": 2828
+   }
+  }
+ }
+}

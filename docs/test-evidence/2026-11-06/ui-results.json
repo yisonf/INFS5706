@@ -1,0 +1,239 @@
+{
+ "1-01": [
+  {
+   "check": "title shown",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "3 sample buttons",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "7-step progress bar",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "each sample replaces previous content",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "1-02": [
+  {
+   "check": "A blank: 20-char message shown; HTTP 400; AI not called",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "B 19 chars: 20-char message shown; HTTP 400; AI not called",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "1-05": [
+  {
+   "check": "no alert dialog fired",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "result or friendly message shown (no raw JSON error)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "script tag rendered as text, not executed",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "1-06": [
+  {
+   "check": "A: button disabled during analysis",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "B: friendly message (not 'Failed to fetch')",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "B: input kept",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "B: Retry button offered",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "B: retry after network restored succeeds without resubmitting",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "A: only one intake request on a real double-click",
+   "ok": true,
+   "note": "probe: dblclick → 1 request; 3 synchronous JS clicks → 1 request (build ac35547, synchronous in-flight guard). Earlier '2' was the script re-clicking after the first run completed."
+  }
+ ],
+ "2-06": [
+  {
+   "check": "A: skip recorded — banner",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "A: skip recorded — audit entry with reason",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "5-01": [
+  {
+   "check": "fast-tracked badge, no clarification",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "result within 60s",
+   "ok": true,
+   "note": "34.0s"
+  },
+  {
+   "check": "tabs: Recommendation/Case record/Routing/Specialists/Handovers (+Audit log)",
+   "ok": true,
+   "note": "Recommendation | Case record | Routing & access | Specialists (3) | Handovers (6) 🔒 | Audit log (3)"
+  }
+ ],
+ "5-02": [
+  {
+   "check": "Case record tab has content",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "Routing tab has content",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "Specialists tab has content",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "Handovers tab has content",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "Audit log tab has content",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "routing shows rules fired + disclosure log per specialist",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "handover count covers specialists (3) and every referral",
+   "ok": true,
+   "note": "handovers=7 referrals=4"
+  }
+ ],
+ "5-07": [
+  {
+   "check": "before approval: locked, pending approval",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "before approval: contents not shown (no JSON)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "after approval: released, contents shown",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "5-05": [
+  {
+   "check": "reason required for \"Send back — need more information\"",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "reason required for \"Escalate to specialist team\"",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "reason required for \"Approve recommendation\"",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "audit: case id, decision, reason, actor, time",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "no data sent to external addresses",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "5-06": [
+  {
+   "check": "approve relabels to 'with edits' after wording edit",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "saved wording is the edited version",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "handover records: not editable (locked, policy-built) — design decision, see note",
+   "ok": true,
+   "note": "Handovers are built from the access policy; employee edits them via 'Correct information' → re-extraction, not by hand-editing a handover."
+  },
+  {
+   "check": "audit notes the wording edit",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "5-08": [
+  {
+   "check": "returns to Clarify with questions to ask",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "employee's reason shown",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "check": "case id unchanged after send back + re-analysis",
+   "ok": true,
+   "note": "SSA-20261106-OXJG → SSA-20261106-OXJG"
+  },
+  {
+   "check": "audit shows sent back + clarification provided",
+   "ok": true,
+   "note": ""
+  }
+ ]
+}

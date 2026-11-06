@@ -1,0 +1,504 @@
+{
+ "trace": {
+  "rounds": [
+   {
+    "status": 200,
+    "dt": 4.1,
+    "resp": {
+     "caseRecord": {
+      "caseId": "SSA-20261106-OWD8",
+      "summary": "An affected person received an email claiming a package was being held and requesting a small redelivery fee. The person clicked the link in the email and saw a card payment form. The person became suspicious and closed the page without entering any details. No loss or disclosure of information is reported.",
+      "channels": [
+       "email"
+      ],
+      "scamType": "phishing",
+      "financialLoss": {
+       "reported": false,
+       "amountAud": null,
+       "paymentMethod": null
+      },
+      "compromisedInformation": [],
+      "incidentOngoing": false,
+      "indicators": {
+       "urgency": "low",
+       "urgencyReasons": [
+        "attempt_only",
+        "no_information_disclosed",
+        "no_financial_loss"
+       ],
+       "vulnerability": [],
+       "telecomRisk": false
+      },
+      "missingInformation": [
+       "date and time the email was received",
+       "whether the email was kept and can be forwarded or screenshotted",
+       "whether any courier delivery was genuinely expected",
+       "whether the link was opened on a device that has since shown unusual behaviour",
+       "whether any files were downloaded or prompts accepted after clicking the link",
+       "whether the email was received on more than one account or device"
+      ],
+      "conflictingInformation": [],
+      "uncertainInformation": [
+       "Whether the courier name shown in the email matches a real courier is not stated.",
+       "Whether any data was entered is based on the person's account that nothing was entered."
+      ],
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [
+        "example-courier-redelivery.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [
+        "parcel-notice@example-courier.example"
+       ],
+       "organisationsImpersonated": [
+        "Example Courier"
+       ]
+      }
+     },
+     "needsClarification": true,
+     "clarificationReason": "Information is missing and the case is not high urgency — returned to the employee for clarification.",
+     "round": 1,
+     "urgencyRulesFired": [],
+     "timingMs": {
+      "intake": 3758
+     },
+     "usage": {
+      "intake": {
+       "inputTokens": 1474,
+       "outputTokens": 514
+      }
+     }
+    }
+   },
+   {
+    "status": 200,
+    "dt": 4.3,
+    "resp": {
+     "caseRecord": {
+      "caseId": "SSA-20261106-OWD8",
+      "summary": "The affected person received an email claiming a parcel was held and that a small fee was required for redelivery. He clicked the link and saw a card payment form, then closed it without entering any details. No loss or disclosure of information has been reported, and no further contact has occurred.",
+      "channels": [
+       "email"
+      ],
+      "scamType": "phishing",
+      "financialLoss": {
+       "reported": false,
+       "amountAud": null,
+       "paymentMethod": null
+      },
+      "compromisedInformation": [],
+      "incidentOngoing": false,
+      "indicators": {
+       "urgency": "low",
+       "urgencyReasons": [
+        "attempt_only",
+        "no_information_disclosed",
+        "no_financial_loss",
+        "no_further_contact"
+       ],
+       "vulnerability": [],
+       "telecomRisk": false
+      },
+      "missingInformation": [
+       "whether the email was opened on a device with any security software or alerts",
+       "whether any files or attachments were opened or downloaded",
+       "whether the link was opened on a phone, tablet or computer",
+       "whether the email has been kept or forwarded for evidence"
+      ],
+      "conflictingInformation": [],
+      "uncertainInformation": [
+       "The courier named in the email may be impersonated, but this is not stated by the affected person.",
+       "Whether the payment page captured any data on load or before closing is unknown."
+      ],
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [
+        "example-courier-redelivery.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [
+        "parcel-notice@example-courier.example"
+       ],
+       "organisationsImpersonated": [
+        "example-courier"
+       ]
+      }
+     },
+     "needsClarification": true,
+     "clarificationReason": "Information is missing and the case is not high urgency — returned to the employee for clarification.",
+     "round": 2,
+     "urgencyRulesFired": [],
+     "timingMs": {
+      "intake": 4173
+     },
+     "usage": {
+      "intake": {
+       "inputTokens": 1583,
+       "outputTokens": 491
+      }
+     }
+    }
+   }
+  ],
+  "analyse": {
+   "status": 200,
+   "dt": 15.5
+  }
+ },
+ "res": {
+  "caseRecord": {
+   "caseId": "SSA-20261106-OWD8",
+   "summary": "The affected person received an email claiming a parcel was held and that a small fee was required for redelivery. He clicked the link and saw a card payment form, then closed it without entering any details. No loss or disclosure of information has been reported, and no further contact has occurred.",
+   "channels": [
+    "email"
+   ],
+   "scamType": "phishing",
+   "financialLoss": {
+    "reported": false,
+    "amountAud": null,
+    "paymentMethod": null
+   },
+   "compromisedInformation": [],
+   "incidentOngoing": false,
+   "indicators": {
+    "urgency": "low",
+    "urgencyReasons": [
+     "attempt_only",
+     "no_information_disclosed",
+     "no_financial_loss",
+     "no_further_contact"
+    ],
+    "vulnerability": [],
+    "telecomRisk": false
+   },
+   "missingInformation": [
+    "whether the email was opened on a device with any security software or alerts",
+    "whether any files or attachments were opened or downloaded",
+    "whether the link was opened on a phone, tablet or computer",
+    "whether the email has been kept or forwarded for evidence"
+   ],
+   "conflictingInformation": [],
+   "uncertainInformation": [
+    "The courier named in the email may be impersonated, but this is not stated by the affected person.",
+    "Whether the payment page captured any data on load or before closing is unknown."
+   ],
+   "entities": {
+    "phoneNumbers": [],
+    "urls": [
+     "example-courier-redelivery.example"
+    ],
+    "bankAccounts": [],
+    "onlineHandles": [
+     "parcel-notice@example-courier.example"
+    ],
+    "organisationsImpersonated": [
+     "example-courier"
+    ]
+   }
+  },
+  "routing": {
+   "activatedAgents": [
+    "digital_platform"
+   ],
+   "rulesFired": [
+    "DIG-01 scammer contacted via social media, website or email",
+    "DIG-02 URLs or online handles identified"
+   ],
+   "needsHumanJudgement": false,
+   "filteredViews": {
+    "digital_platform": {
+     "caseId": "SSA-20261106-OWD8",
+     "summary": "The affected person received an email claiming a parcel was held and that a small fee was required for redelivery. He clicked the link and saw a card payment form, then closed it without entering any details. No loss or disclosure of information has been reported, and no further contact has occurred.",
+     "scamType": "phishing",
+     "channels": [
+      "email"
+     ],
+     "compromisedInformation": [],
+     "incidentOngoing": false,
+     "indicators": {
+      "urgency": "low",
+      "urgencyReasons": [
+       "attempt_only",
+       "no_information_disclosed",
+       "no_financial_loss",
+       "no_further_contact"
+      ],
+      "vulnerability": [],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [],
+      "urls": [
+       "example-courier-redelivery.example"
+      ],
+      "bankAccounts": [],
+      "onlineHandles": [
+       "parcel-notice@example-courier.example"
+      ],
+      "organisationsImpersonated": [
+       "example-courier"
+      ]
+     }
+    }
+   },
+   "disclosureLog": [
+    {
+     "agent": "digital_platform",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ]
+    }
+   ],
+   "fastTrack": false
+  },
+  "findings": [
+   {
+    "agent": "digital_platform",
+    "risks": [
+     "Live phishing URL impersonating a courier that presents a card payment form, which could capture card details from others who click it.",
+     "Sender address impersonates example-courier and could be used to target other recipients.",
+     "Affected person visited the payment page, so there is residual risk if he revisits or is contacted again."
+    ],
+    "recommendedNextSteps": [
+     "Record the URL exactly as received (example-courier-redelivery.example) and submit it to the host or platform abuse channel for takedown assessment [DP-G1].",
+     "Advise the affected person not to revisit the link or re-enter any details on it [DP-G1].",
+     "Report the sender handle parcel-notice@example-courier.example through the email provider's impersonation or phishing process [DP-G3].",
+     "Ask the affected person to preserve the original email, including full headers, and screenshots of the email and payment form as evidence [DP-G3].",
+     "Confirm with the affected person that no credentials, card details or identity documents were entered on the page, and record that confirmation [DP-G1]."
+    ],
+    "missingInformation": [
+     "Whether the affected person has preserved the original email with full headers and any screenshots.",
+     "Whether the sender address is spoofed or was created for this campaign.",
+     "Whether the payment form was only viewed or any field was interacted with, beyond the reported closure without entry.",
+     "Whether any other recipients have reported the same campaign.",
+     "No explicit guidance covers reporting a sender email address versus a social-media profile; DP-G3 is applied by analogy."
+    ],
+    "guidanceCited": [
+     "DP-G1",
+     "DP-G3"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "The malicious URL and reported non-disclosure are clear under DP-G1, but applying DP-G3 to an email sender address is an analogy because the guidance addresses profiles."
+   }
+  ],
+  "assessment": {
+   "caseId": "SSA-20261106-OWD8",
+   "scamSummary": "Suspected phishing attempt: an email impersonating a courier claimed a parcel was held and asked for a redelivery fee. The affected person clicked the link, saw a card payment form and closed it without entering details. No loss, no disclosed information and no further contact have been reported, so this appears to be an attempt only.",
+   "urgency": "low",
+   "priorityRationale": "No financial loss, no reported disclosure, no ongoing contact and no vulnerability indicators. The remaining concern is the live phishing URL and sender, which could harm other recipients, and some unconfirmed details about the person's device and the page.",
+   "recommendedActions": [
+    {
+     "action": "Confirm with the affected person that no card details, credentials or identity documents were entered on the page, and record that confirmation.",
+     "owner": "Frontline employee",
+     "priority": 1
+    },
+    {
+     "action": "Advise the affected person not to revisit the link, reply to the email or enter any details on the page.",
+     "owner": "Frontline employee",
+     "priority": 2
+    },
+    {
+     "action": "Ask the affected person whether any attachment was opened or downloaded and which device the link was opened on. If a file was opened or the device shows security alerts, escalate to your IT or security team.",
+     "owner": "Frontline employee",
+     "priority": 3
+    },
+    {
+     "action": "Ask the affected person to keep the original email with full headers and take screenshots of the email and payment form. Do not ask them to forward it unless your process allows it.",
+     "owner": "Frontline employee",
+     "priority": 4
+    },
+    {
+     "action": "Record the URL exactly as received (example-courier-redelivery.example) and submit it to the host or platform abuse channel for takedown assessment.",
+     "owner": "Frontline employee",
+     "priority": 5
+    },
+    {
+     "action": "Report the sender address parcel-notice@example-courier.example through the email provider's phishing or impersonation process.",
+     "owner": "Frontline employee",
+     "priority": 6
+    },
+    {
+     "action": "Submit a report to the government scam-reporting service, including the URL, sender address and impersonated courier.",
+     "owner": "Frontline employee",
+     "priority": 7
+    },
+    {
+     "action": "Tell the person that if they later notice unexpected card activity or further contact, they should contact you or their card issuer promptly.",
+     "owner": "Frontline employee",
+     "priority": 8
+    }
+   ],
+   "referrals": [
+    {
+     "organisationType": "Government scam-reporting service",
+     "reason": "This is a strongly suspected phishing attempt with a live URL and an impersonated courier, which is useful for national reporting and trend data."
+    }
+   ],
+   "risksAndUnresolvedIssues": [
+    "The phishing page is live and could capture card details from other people.",
+    "Whether the page captured any data on load or before it was closed is unknown.",
+    "It is unknown whether any files or attachments were opened or downloaded.",
+    "The device type and any security alerts are unknown.",
+    "It is unknown whether the sender address is spoofed or was created for this campaign.",
+    "It is unknown whether the original email and screenshots have been preserved.",
+    "It is unknown whether other recipients have reported the same campaign.",
+    "Identity-recovery and community support referrals are not indicated, as no information was disclosed and no vulnerability indicators are present."
+   ],
+   "itemsRequiringHumanReview": [
+    "The digital_platform specialist reported medium confidence; its main finding is clear, but it applied DP-G3 (written for social-media profiles) to an email sender address by analogy. Please confirm that reporting the sender address through the email provider's process is appropriate.",
+    "No explicit guidance covers reporting an email sender address, so a human should decide the correct channel.",
+    "The affected person's statement that no details were entered is self-reported and unverified."
+   ],
+   "suggestedCommunicationToAffectedPerson": "Thanks for letting us know, and for closing the page without entering anything. That was the right call. This looks like a suspected phishing email, which is a common trick, and it seems no harm has been done. Please don't open the link again or reply to the email. If you still have the email, please keep it, as it helps us report it. It would also help to know whether you opened any attachments, and what device you used. If anything unusual shows up on your card or you get more messages, let us know straight away.",
+   "handovers": [
+    {
+     "organisationType": "digital_platform",
+     "label": "Digital platform",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-OWD8",
+      "summary": "The affected person received an email claiming a parcel was held and that a small fee was required for redelivery. He clicked the link and saw a card payment form, then closed it without entering any details. No loss or disclosure of information has been reported, and no further contact has occurred.",
+      "scamType": "phishing",
+      "channels": [
+       "email"
+      ],
+      "compromisedInformation": [],
+      "incidentOngoing": false,
+      "indicators": {
+       "urgency": "low",
+       "urgencyReasons": [
+        "attempt_only",
+        "no_information_disclosed",
+        "no_financial_loss",
+        "no_further_contact"
+       ],
+       "vulnerability": [],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [
+        "example-courier-redelivery.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [
+        "parcel-notice@example-courier.example"
+       ],
+       "organisationsImpersonated": [
+        "example-courier"
+       ]
+      },
+      "specialistFinding": {
+       "agent": "digital_platform",
+       "risks": [
+        "Live phishing URL impersonating a courier that presents a card payment form, which could capture card details from others who click it.",
+        "Sender address impersonates example-courier and could be used to target other recipients.",
+        "Affected person visited the payment page, so there is residual risk if he revisits or is contacted again."
+       ],
+       "recommendedNextSteps": [
+        "Record the URL exactly as received (example-courier-redelivery.example) and submit it to the host or platform abuse channel for takedown assessment [DP-G1].",
+        "Advise the affected person not to revisit the link or re-enter any details on it [DP-G1].",
+        "Report the sender handle parcel-notice@example-courier.example through the email provider's impersonation or phishing process [DP-G3].",
+        "Ask the affected person to preserve the original email, including full headers, and screenshots of the email and payment form as evidence [DP-G3].",
+        "Confirm with the affected person that no credentials, card details or identity documents were entered on the page, and record that confirmation [DP-G1]."
+       ],
+       "missingInformation": [
+        "Whether the affected person has preserved the original email with full headers and any screenshots.",
+        "Whether the sender address is spoofed or was created for this campaign.",
+        "Whether the payment form was only viewed or any field was interacted with, beyond the reported closure without entry.",
+        "Whether any other recipients have reported the same campaign.",
+        "No explicit guidance covers reporting a sender email address versus a social-media profile; DP-G3 is applied by analogy."
+       ],
+       "guidanceCited": [
+        "DP-G1",
+        "DP-G3"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "The malicious URL and reported non-disclosure are clear under DP-G1, but applying DP-G3 to an email sender address is an analogy because the guidance addresses profiles."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "government_reporting",
+     "label": "Government scam-reporting service",
+     "reason": "This is a strongly suspected phishing attempt with a live URL and an impersonated courier, which is useful for national reporting and trend data.",
+     "fieldsShared": [
+      "caseId",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "entities.phoneNumbers",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-OWD8",
+      "scamType": "phishing",
+      "channels": [
+       "email"
+      ],
+      "incidentOngoing": false,
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [
+        "example-courier-redelivery.example"
+       ],
+       "onlineHandles": [
+        "parcel-notice@example-courier.example"
+       ],
+       "organisationsImpersonated": [
+        "example-courier"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    }
+   ],
+   "disclaimer": "AI-generated recommendation for review by an authorised frontline employee. The employee is responsible for verifying, communicating with the affected person and initiating any action within their authority. This tool has not confirmed that a scam occurred and has taken no action."
+  },
+  "timingMs": {
+   "intake": 4173,
+   "routing": 0,
+   "specialists": 5647,
+   "coordinator": 9723
+  },
+  "usage": {
+   "intake": {
+    "inputTokens": 1583,
+    "outputTokens": 491
+   },
+   "specialist:digital_platform": {
+    "inputTokens": 1167,
+    "outputTokens": 1034
+   },
+   "coordinator": {
+    "inputTokens": 2293,
+    "outputTokens": 1325
+   }
+  }
+ }
+}

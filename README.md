@@ -64,3 +64,9 @@ docs/               design notes and assignment brief summary
 - **Part C** — 6-minute oral defence
 
 See `docs/brief-summary.md` and `docs/design-notes.md`.
+
+## Testing
+
+- `npm test` — 32 unit tests over routing, access control, redaction, handovers, urgency floor and schemas.
+- `docs/test-log-2026-11-05.docx` — 47-case functional, boundary, abnormal and adversarial test log (34/47 on commit `93aff3a`).
+- `docs/test-log-2026-11-06-retest.md` — the same 47 cases re-run against the live build after the fixes (**47/47**), with raw evidence and the runners in `docs/test-evidence/2026-11-06/`.

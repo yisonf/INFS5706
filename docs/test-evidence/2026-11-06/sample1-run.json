@@ -1,0 +1,1053 @@
+{
+ "trace": {
+  "rounds": [
+   {
+    "status": 200,
+    "dt": 15.4,
+    "resp": {
+     "caseRecord": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe account followed. The caller is reportedly still contacting her and asking for another code.",
+      "channels": [
+       "sms",
+       "phone_call",
+       "website"
+      ],
+      "scamType": "impersonation",
+      "financialLoss": {
+       "reported": true,
+       "amountAud": 4200,
+       "paymentMethod": "bank transfer to a so-called 'safe account'"
+      },
+      "compromisedInformation": [
+       "online banking login details",
+       "one-time SMS code"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "transfer_completed",
+        "credentials_disclosed_accounts_exposed",
+        "one_time_code_disclosed",
+        "scammer_requesting_further_code"
+       ],
+       "vulnerability": [
+        "distress",
+        "elderly",
+        "social_isolation",
+        "under_pressure_from_scammer"
+       ],
+       "telecomRisk": false
+      },
+      "missingInformation": [
+       "date and time of the transfer",
+       "destination account details (BSB, account number, payee name or PayID)",
+       "how the transfer was made (customer-initiated, or by the caller after login)",
+       "which account(s) the money left",
+       "exact sender number of the original SMS",
+       "exact URL of the login page the caller sent",
+       "whether the customer is on the phone with the caller right now",
+       "whether the customer has given any further codes since the transfer",
+       "whether the card number was disclosed",
+       "whether any remote-access software was installed or requested",
+       "whether the same login details are used for other accounts",
+       "number of codes read out and the time of each"
+      ],
+      "conflictingInformation": [
+       "Structured contactMethod lists only sms, but the free text describes a phone call and a web page used by the scammer as well."
+      ],
+      "uncertainInformation": [
+       "The customer is unsure whether she also gave her card number.",
+       "The SMS appeared in the usual bank thread, which may indicate sender spoofing; this is inferred, not stated.",
+       "It is unclear whether the reported amount is the total loss or a single transfer.",
+       "The pension is mentioned, but financial hardship is not stated.",
+       "It is unclear whether the login page URL differs from the URL in the SMS."
+      ],
+      "entities": {
+       "phoneNumbers": [
+        "0400 000 000"
+       ],
+       "urls": [
+        "examplebank-secure.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": [
+        "Example Bank"
+       ]
+      }
+     },
+     "needsClarification": false,
+     "clarificationReason": "Information is missing, but the case is high urgency — fast-tracked without waiting for clarification.",
+     "round": 1,
+     "urgencyRulesFired": [
+      "URG-01 employee marked incident as ongoing",
+      "URG-03 one-time code or banking credentials disclosed",
+      "URG-04 financial loss reported"
+     ],
+     "timingMs": {
+      "intake": 15168
+     },
+     "usage": {
+      "intake": {
+       "inputTokens": 1584,
+       "outputTokens": 2069
+      }
+     }
+    }
+   }
+  ],
+  "analyse": {
+   "status": 200,
+   "dt": 35.4
+  }
+ },
+ "res": {
+  "caseRecord": {
+   "caseId": "SSA-20261106-7EIV",
+   "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe account followed. The caller is reportedly still contacting her and asking for another code.",
+   "channels": [
+    "sms",
+    "phone_call",
+    "website"
+   ],
+   "scamType": "impersonation",
+   "financialLoss": {
+    "reported": true,
+    "amountAud": 4200,
+    "paymentMethod": "bank transfer to a so-called 'safe account'"
+   },
+   "compromisedInformation": [
+    "online banking login details",
+    "one-time SMS code"
+   ],
+   "incidentOngoing": true,
+   "indicators": {
+    "urgency": "high",
+    "urgencyReasons": [
+     "incident_ongoing",
+     "transfer_completed",
+     "credentials_disclosed_accounts_exposed",
+     "one_time_code_disclosed",
+     "scammer_requesting_further_code"
+    ],
+    "vulnerability": [
+     "distress",
+     "elderly",
+     "social_isolation",
+     "under_pressure_from_scammer"
+    ],
+    "telecomRisk": false
+   },
+   "missingInformation": [
+    "date and time of the transfer",
+    "destination account details (BSB, account number, payee name or PayID)",
+    "how the transfer was made (customer-initiated, or by the caller after login)",
+    "which account(s) the money left",
+    "exact sender number of the original SMS",
+    "exact URL of the login page the caller sent",
+    "whether the customer is on the phone with the caller right now",
+    "whether the customer has given any further codes since the transfer",
+    "whether the card number was disclosed",
+    "whether any remote-access software was installed or requested",
+    "whether the same login details are used for other accounts",
+    "number of codes read out and the time of each"
+   ],
+   "conflictingInformation": [
+    "Structured contactMethod lists only sms, but the free text describes a phone call and a web page used by the scammer as well."
+   ],
+   "uncertainInformation": [
+    "The customer is unsure whether she also gave her card number.",
+    "The SMS appeared in the usual bank thread, which may indicate sender spoofing; this is inferred, not stated.",
+    "It is unclear whether the reported amount is the total loss or a single transfer.",
+    "The pension is mentioned, but financial hardship is not stated.",
+    "It is unclear whether the login page URL differs from the URL in the SMS."
+   ],
+   "entities": {
+    "phoneNumbers": [
+     "0400 000 000"
+    ],
+    "urls": [
+     "examplebank-secure.example"
+    ],
+    "bankAccounts": [],
+    "onlineHandles": [],
+    "organisationsImpersonated": [
+     "Example Bank"
+    ]
+   }
+  },
+  "routing": {
+   "activatedAgents": [
+    "banking",
+    "telecom",
+    "digital_platform"
+   ],
+   "rulesFired": [
+    "BANK-01 financial loss reported",
+    "BANK-02 banking credentials or payment details compromised",
+    "TEL-01 scammer contacted via SMS or phone call",
+    "TEL-02 scammer phone numbers identified",
+    "DIG-01 scammer contacted via social media, website or email",
+    "DIG-02 URLs or online handles identified"
+   ],
+   "needsHumanJudgement": false,
+   "filteredViews": {
+    "banking": {
+     "caseId": "SSA-20261106-7EIV",
+     "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe account followed. The caller is reportedly still contacting her and asking for another code.",
+     "scamType": "impersonation",
+     "financialLoss": {
+      "reported": true,
+      "amountAud": 4200,
+      "paymentMethod": "bank transfer to a so-called 'safe account'"
+     },
+     "compromisedInformation": [
+      "online banking login details",
+      "one-time SMS code"
+     ],
+     "incidentOngoing": true,
+     "indicators": {
+      "urgency": "high",
+      "urgencyReasons": [
+       "incident_ongoing",
+       "transfer_completed",
+       "credentials_disclosed_accounts_exposed",
+       "one_time_code_disclosed",
+       "scammer_requesting_further_code"
+      ],
+      "vulnerability": [
+       "distress",
+       "elderly",
+       "social_isolation",
+       "under_pressure_from_scammer"
+      ],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [],
+      "urls": [],
+      "bankAccounts": [],
+      "onlineHandles": [],
+      "organisationsImpersonated": [
+       "Example Bank"
+      ]
+     }
+    },
+    "telecom": {
+     "caseId": "SSA-20261106-7EIV",
+     "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe [account withheld] The caller is reportedly still contacting her and asking for another code.",
+     "scamType": "impersonation",
+     "channels": [
+      "sms",
+      "phone_call",
+      "website"
+     ],
+     "incidentOngoing": true,
+     "indicators": {
+      "urgency": "high",
+      "urgencyReasons": [
+       "incident_ongoing",
+       "transfer_completed",
+       "credentials_disclosed_accounts_exposed",
+       "one_time_code_disclosed",
+       "scammer_requesting_further_code"
+      ],
+      "vulnerability": [
+       "distress",
+       "elderly",
+       "social_isolation",
+       "under_pressure_from_scammer"
+      ],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [
+       "0400 000 000"
+      ],
+      "urls": [],
+      "bankAccounts": [],
+      "onlineHandles": [],
+      "organisationsImpersonated": [
+       "Example Bank"
+      ]
+     }
+    },
+    "digital_platform": {
+     "caseId": "SSA-20261106-7EIV",
+     "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe [account withheld] The caller is reportedly still contacting her and asking for another code.",
+     "scamType": "impersonation",
+     "channels": [
+      "sms",
+      "phone_call",
+      "website"
+     ],
+     "compromisedInformation": [
+      "online banking login details",
+      "one-time SMS code"
+     ],
+     "incidentOngoing": true,
+     "indicators": {
+      "urgency": "high",
+      "urgencyReasons": [
+       "incident_ongoing",
+       "transfer_completed",
+       "credentials_disclosed_accounts_exposed",
+       "one_time_code_disclosed",
+       "scammer_requesting_further_code"
+      ],
+      "vulnerability": [
+       "distress",
+       "elderly",
+       "social_isolation",
+       "under_pressure_from_scammer"
+      ],
+      "telecomRisk": false
+     },
+     "entities": {
+      "phoneNumbers": [],
+      "urls": [
+       "examplebank-secure.example"
+      ],
+      "bankAccounts": [],
+      "onlineHandles": [],
+      "organisationsImpersonated": [
+       "Example Bank"
+      ]
+     }
+    }
+   },
+   "disclosureLog": [
+    {
+     "agent": "banking",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "financialLoss",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.bankAccounts",
+      "entities.organisationsImpersonated"
+     ]
+    },
+    {
+     "agent": "telecom",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.phoneNumbers",
+      "entities.organisationsImpersonated"
+     ]
+    },
+    {
+     "agent": "digital_platform",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ]
+    }
+   ],
+   "fastTrack": true
+  },
+  "findings": [
+   {
+    "agent": "banking",
+    "risks": [
+     "Completed transfer of AUD 4,200 to a so-called 'safe account' with the funds likely already moved",
+     "Ongoing contact from the scammer, who is requesting another one-time code",
+     "Online banking login details and a one-time SMS code were disclosed, so the account may still be accessible to the scammer",
+     "Elderly customer under distress and pressure, with social isolation indicated, making further manipulation likely",
+     "Impersonation of Example Bank through a spoofed SMS thread; guidance does not specifically cover this scam pattern"
+    ],
+    "recommendedNextSteps": [
+     "Advise the customer immediately not to share any further codes, not to log in via any link or page provided by the caller, and to end the call [BK-G1]",
+     "Flag the case to the fraud team now and request a hold on the transfer and the account; the AI does not initiate the hold [BK-G1]",
+     "Ask the fraud team to confirm whether the scammer's session or access to online banking remains active [BK-G2]",
+     "Reset the online banking password and access PIN through official bank channels, not through any link or number provided by the caller [BK-G2]",
+     "Consider card re-issue and confirm whether card details or PINs were also disclosed, since the handover lists only login details and an SMS code [BK-G2]",
+     "Establish the transfer timestamp and whether the destination account is domestic, then raise a recall request with the fraud team; recovery likelihood drops after 24 hours but the request should still be raised [BK-G3]",
+     "Refer the customer to the financial-hardship team and the identity-recovery/victim-support partner given distress, age, isolation and a large loss [BK-G5]",
+     "Check with the customer whether she has been asked to pay any 'fees' to release funds, as a second-wave indicator, although guidance BK-G4 is written for investment and romance scams and applies only by analogy [BK-G4]"
+    ],
+    "missingInformation": [
+     "Exact time the transfer was completed",
+     "Destination account details and whether it is domestic",
+     "Whether card numbers, PINs or other credentials beyond the login and SMS code were disclosed",
+     "Whether the scammer's phone number or URL is known (entity lists are empty)",
+     "Whether other accounts or payees are linked to the compromised login",
+     "Whether any earlier payments were made to the same payee",
+     "Guidance on impersonation of the bank, a scam pattern not explicitly covered by BK guidance"
+    ],
+    "guidanceCited": [
+     "BK-G1",
+     "BK-G2",
+     "BK-G3",
+     "BK-G4",
+     "BK-G5"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "Core steps for ongoing transfers, credential compromise and vulnerability are well covered, but the impersonation pattern, the transfer timing and the destination account are not, so some recommendations rest on analogy."
+   },
+   {
+    "agent": "telecom",
+    "risks": [
+     "Scam SMS appeared in the existing bank message thread, which indicates sender-ID spoofing [TL-G3].",
+     "Caller at 0400 000 000 is still contacting the customer and pressing for another one-time code [TL-G1].",
+     "Customer is elderly, distressed and under pressure, which raises the chance of further disclosure.",
+     "No telecom indicators of SIM-swap or porting are recorded (telecomRisk false), but this has not been confirmed with the customer [TL-G2]."
+    ],
+    "recommendedNextSteps": [
+     "Record the originating number 0400 000 000 exactly as received, and record the SMS sender ID exactly as shown in the bank thread [TL-G1].",
+     "Lodge 0400 000 000 with the telco scam-reporting channel so it can be assessed for blocking; the AI does not block numbers [TL-G1].",
+     "Tell the customer that the SMS appearing in her bank's message thread does not prove it came from the bank [TL-G3].",
+     "Ask the customer whether she has lost mobile service or received any porting or SIM-change messages; if yes, treat as a potential SIM swap and urgently contact her carrier for a port-out lock and account-change check [TL-G2].",
+     "Ask whether the caller asked her to install software or share her screen; if yes, recommend she disconnect the device from the internet and refer it to the digital-platform/IT partner before any further banking use [TL-G4].",
+     "Ask the customer to note and report the exact number of any further calls or texts, and record each originating number as received so it can be lodged [TL-G1]."
+    ],
+    "missingInformation": [
+     "Whether the customer installed any software or shared her screen during the call [TL-G4].",
+     "Whether the customer has lost mobile service or received porting or SIM-change messages [TL-G2].",
+     "Exact sender ID text of the SMS as it appeared in the bank thread [TL-G3].",
+     "Whether the caller's ongoing contact uses 0400 000 000 or other numbers [TL-G1].",
+     "Telecom guidance does not cover the website link or the withheld transfer account; these need other agents' guidance."
+    ],
+    "guidanceCited": [
+     "TL-G1",
+     "TL-G2",
+     "TL-G3",
+     "TL-G4"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "Spoofed SMS and scam-number indicators are clear, but whether device access or SIM-swap occurred is unknown and some fields are withheld."
+   },
+   {
+    "agent": "digital_platform",
+    "risks": [
+     "Online banking login credentials were disclosed on a lookalike page, so the attacker may still have access to the account.",
+     "The caller is still in contact and asking for another SMS code, which could enable further account access or transfers.",
+     "The lookalike domain examplebank-secure.example is actively used to harvest credentials and may still be live.",
+     "The customer is elderly, distressed and socially isolated, which raises the risk of further compliance with the scammer."
+    ],
+    "recommendedNextSteps": [
+     "Record the URL exactly as examplebank-secure.example and submit it to the platform/host abuse channel for takedown assessment [DP-G1].",
+     "Advise the customer not to revisit examplebank-secure.example or any link from the SMS [DP-G1].",
+     "Arrange a password reset for the online banking login, completed through the bank's official channel and not the link provided by the caller [DP-G2].",
+     "Ask the customer to enable two-factor authentication on the online banking profile [DP-G2].",
+     "Review active sessions and registered recovery details (phone, email) on the account for unrecognised devices or changes [DP-G2].",
+     "Ask the customer whether the same password is used on any email or social-media accounts, and if so, reset those too [DP-G2].",
+     "Ask the customer to warn any contacts who may receive messages from her accounts that they may be targeted by similar scams [DP-G2].",
+     "Ask the customer to preserve the SMS thread, call log and any screenshots of the lookalike page as evidence [DP-G3]."
+    ],
+    "missingInformation": [
+     "Sender ID or phone number of the SMS and the callback number used by the caller (phoneNumbers is empty).",
+     "Whether the customer has any email or social-media credentials that were disclosed, and whether the same password is used elsewhere.",
+     "Whether recovery details (phone/email) or session devices on the banking profile have already been changed by the caller.",
+     "Whether the lookalike page was captured with its full URL, page content, or any hosting details.",
+     "No guidance covers reporting an SMS sender impersonating a bank or phone-based impersonation; escalate to the appropriate channel.",
+     "No guidance covers advice on refusing caller-requested codes; confirm the frontline script with the team."
+    ],
+    "guidanceCited": [
+     "DP-G1",
+     "DP-G2",
+     "DP-G3"
+    ],
+    "confidence": "medium",
+    "confidenceRationale": "Guidance covers the malicious URL and the credential compromise, but not SMS sender spoofing or phone-based impersonation, and key details about the lookalike page and recovery changes are missing."
+   }
+  ],
+  "assessment": {
+   "caseId": "SSA-20261106-7EIV",
+   "scamSummary": "Suspected bank-impersonation scam: an SMS in the customer's usual bank thread led to a call with someone claiming to be the bank's fraud team, a login on a page the caller supplied, and a one-time code read out. A suspected AUD 4,200 transfer to a so-called 'safe account' followed, and the caller is reportedly still pressing for another code.",
+   "urgency": "high",
+   "priorityRationale": "The incident is ongoing, a transfer has reportedly been completed, login details and a one-time code were disclosed, and the caller is asking for another code. The customer is elderly, distressed and isolated.",
+   "recommendedActions": [
+    {
+     "action": "Tell the customer now to stop speaking to the caller, not to read out or share any further codes, and not to use any link or page the caller or SMS gave her [BK-G1].",
+     "owner": "Frontline employee",
+     "priority": 1
+    },
+    {
+     "action": "Escalate to the fraud team immediately and request a hold on the transfer and on the account. The AI does not initiate holds; the employee can escalate this [BK-G1].",
+     "owner": "Fraud team via employee",
+     "priority": 2
+    },
+    {
+     "action": "Ask the fraud team to check whether the scammer's online banking session or access is still active, and to review recovery details and registered devices for changes [BK-G2, DP-G2].",
+     "owner": "Fraud team via employee",
+     "priority": 3
+    },
+    {
+     "action": "Arrange a password and access PIN reset through official bank channels only, never via the caller's link or number. Confirm the timing with the fraud team so it fits with their containment steps [BK-G2, DP-G2].",
+     "owner": "Frontline employee",
+     "priority": 4
+    },
+    {
+     "action": "Ask whether the caller asked her to install software or share her screen. If yes, advise disconnecting the device from the internet and refer it to the digital-platform/IT partner before any further banking use [TL-G4].",
+     "owner": "Frontline employee",
+     "priority": 5
+    },
+    {
+     "action": "Ask whether she has lost mobile service or received porting or SIM-change messages. If yes, treat it as a possible SIM swap and urgently contact her carrier for a port-out lock and account-change check [TL-G2].",
+     "owner": "Frontline employee",
+     "priority": 6
+    },
+    {
+     "action": "Confirm whether her card number or PIN was disclosed, and consider a card re-issue [BK-G2].",
+     "owner": "Frontline employee",
+     "priority": 7
+    },
+    {
+     "action": "Ask whether the same password is used on other accounts such as email, and reset those too if so [DP-G2].",
+     "owner": "Frontline employee",
+     "priority": 8
+    },
+    {
+     "action": "Establish the transfer time, source account and destination details, then ask the fraud team to raise a recall request. Recovery chances drop after 24 hours, but the request should still be raised [BK-G3].",
+     "owner": "Fraud team via employee",
+     "priority": 9
+    },
+    {
+     "action": "Record exactly the SMS sender ID, 0400 000 000 and any further numbers used. Lodge the numbers with the telco scam-reporting channel for blocking assessment; the AI does not block numbers [TL-G1].",
+     "owner": "Frontline employee",
+     "priority": 10
+    },
+    {
+     "action": "Record examplebank-secure.example exactly and submit it to the host/platform abuse channel for takedown assessment [DP-G1].",
+     "owner": "Frontline employee",
+     "priority": 11
+    },
+    {
+     "action": "Ask the customer to keep the SMS thread, call log and any screenshots as evidence, and to report any further calls or texts [DP-G3, TL-G1].",
+     "owner": "Frontline employee",
+     "priority": 12
+    },
+    {
+     "action": "Ask whether she has been told to pay any 'fees' to release funds, as a possible second-wave sign. BK-G4 is written for investment and romance scams, so this applies by analogy only [BK-G4].",
+     "owner": "Frontline employee",
+     "priority": 13
+    },
+    {
+     "action": "Make the referrals listed below, including support for the customer.",
+     "owner": "Frontline employee",
+     "priority": 14
+    }
+   ],
+   "referrals": [
+    {
+     "organisationType": "Government scam-reporting service",
+     "reason": "Strongly suspected impersonation scam with a reported loss, for national reporting and trend data."
+    },
+    {
+     "organisationType": "Identity-recovery / victim-support organisation",
+     "reason": "Banking credentials were disclosed and the customer is distressed."
+    },
+    {
+     "organisationType": "Community support organisation",
+     "reason": "Vulnerability indicators are present: elderly, socially isolated, under pressure from the scammer."
+    },
+    {
+     "organisationType": "Law enforcement",
+     "reason": "Only if the organisation's policy requires reporting a loss of this kind; the employee should check the policy."
+    }
+   ],
+   "risksAndUnresolvedIssues": [
+    "The scammer may still have online banking access, and the customer may give another code at any moment.",
+    "The AUD 4,200 may already have left the destination account, and recovery chances fall after 24 hours.",
+    "It is unclear whether AUD 4,200 is the total loss or a single transfer.",
+    "The transfer time, source account, destination details and method (customer-initiated or caller-initiated) are unknown.",
+    "It is unknown whether the customer is on the phone with the caller right now, or has given further codes since the transfer.",
+    "It is unknown whether card details, remote access or SIM-swap activity were involved.",
+    "The SMS sender ID and the exact login page URL are not recorded, and it is unclear whether the page URL differs from the SMS link.",
+    "The structured contact method lists only SMS, though the free text describes a call and a web page as well.",
+    "Sender spoofing is inferred from the SMS appearing in the bank thread, not confirmed.",
+    "The customer's isolation and distress raise the risk of further manipulation."
+   ],
+   "itemsRequiringHumanReview": [
+    "All three specialists (banking, telecom, digital platform) reported medium confidence, so every recommendation needs employee or fraud-team judgement.",
+    "Banking and digital platform say the scammer's phone number or URL is not recorded, but the case record lists 0400 000 000 and examplebank-secure.example. Please verify these against the original report.",
+    "No guidance covers bank impersonation through a spoofed SMS thread or phone-based impersonation, so related steps rest on analogy.",
+    "The digital platform agent notes there is no guidance on refusing caller-requested codes. Confirm the frontline script with the team.",
+    "Banking suggests a financial-hardship team referral, but hardship is not stated (only that the customer receives a pension). Confirm whether it is appropriate.",
+    "The digital platform agent suggests enabling two-factor authentication, but an SMS code is already in use. Confirm with the fraud team which controls to apply.",
+    "Confirm the order of the password reset and the fraud team's session review, so that evidence and containment are not undermined.",
+    "BK-G4 on 'fees' applies only by analogy to this scam pattern.",
+    "Whether law enforcement reporting is required depends on the organisation's policy and needs confirming.",
+    "Decide who contacts the carrier and the host abuse channel, as these are not in the referral directory."
+   ],
+   "suggestedCommunicationToAffectedPerson": "Thank you for telling us. You have done the right thing. Please don't share any more codes with the caller, and please hang up if they ring again. A message sitting in your bank's usual thread doesn't prove it came from the bank, so we'd like to check this together. We're asking our fraud team to look at your account right away, and we'll reset your password through our official channels. Could you tell me roughly when the transfer happened, and whether you gave out your card number? None of this is your fault; these callers are very convincing. We can also connect you with people who can support you, if you'd like.",
+   "handovers": [
+    {
+     "organisationType": "banking",
+     "label": "Bank / payment provider",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "financialLoss",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.bankAccounts",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe account followed. The caller is reportedly still contacting her and asking for another code.",
+      "scamType": "impersonation",
+      "financialLoss": {
+       "reported": true,
+       "amountAud": 4200,
+       "paymentMethod": "bank transfer to a so-called 'safe account'"
+      },
+      "compromisedInformation": [
+       "online banking login details",
+       "one-time SMS code"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "transfer_completed",
+        "credentials_disclosed_accounts_exposed",
+        "one_time_code_disclosed",
+        "scammer_requesting_further_code"
+       ],
+       "vulnerability": [
+        "distress",
+        "elderly",
+        "social_isolation",
+        "under_pressure_from_scammer"
+       ],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": [
+        "Example Bank"
+       ]
+      },
+      "specialistFinding": {
+       "agent": "banking",
+       "risks": [
+        "Completed transfer of AUD 4,200 to a so-called 'safe account' with the funds likely already moved",
+        "Ongoing contact from the scammer, who is requesting another one-time code",
+        "Online banking login details and a one-time SMS code were disclosed, so the account may still be accessible to the scammer",
+        "Elderly customer under distress and pressure, with social isolation indicated, making further manipulation likely",
+        "Impersonation of Example Bank through a spoofed SMS thread; guidance does not specifically cover this scam pattern"
+       ],
+       "recommendedNextSteps": [
+        "Advise the customer immediately not to share any further codes, not to log in via any link or page provided by the caller, and to end the call [BK-G1]",
+        "Flag the case to the fraud team now and request a hold on the transfer and the account; the AI does not initiate the hold [BK-G1]",
+        "Ask the fraud team to confirm whether the scammer's session or access to online banking remains active [BK-G2]",
+        "Reset the online banking password and access PIN through official bank channels, not through any link or number provided by the caller [BK-G2]",
+        "Consider card re-issue and confirm whether card details or PINs were also disclosed, since the handover lists only login details and an SMS code [BK-G2]",
+        "Establish the transfer timestamp and whether the destination account is domestic, then raise a recall request with the fraud team; recovery likelihood drops after 24 hours but the request should still be raised [BK-G3]",
+        "Refer the customer to the financial-hardship team and the identity-recovery/victim-support partner given distress, age, isolation and a large loss [BK-G5]",
+        "Check with the customer whether she has been asked to pay any 'fees' to release funds, as a second-wave indicator, although guidance BK-G4 is written for investment and romance scams and applies only by analogy [BK-G4]"
+       ],
+       "missingInformation": [
+        "Exact time the transfer was completed",
+        "Destination account details and whether it is domestic",
+        "Whether card numbers, PINs or other credentials beyond the login and SMS code were disclosed",
+        "Whether the scammer's phone number or URL is known (entity lists are empty)",
+        "Whether other accounts or payees are linked to the compromised login",
+        "Whether any earlier payments were made to the same payee",
+        "Guidance on impersonation of the bank, a scam pattern not explicitly covered by BK guidance"
+       ],
+       "guidanceCited": [
+        "BK-G1",
+        "BK-G2",
+        "BK-G3",
+        "BK-G4",
+        "BK-G5"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "Core steps for ongoing transfers, credential compromise and vulnerability are well covered, but the impersonation pattern, the transfer timing and the destination account are not, so some recommendations rest on analogy."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "telecom",
+     "label": "Telecommunications provider",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.phoneNumbers",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe [account withheld] The caller is reportedly still contacting her and asking for another code.",
+      "scamType": "impersonation",
+      "channels": [
+       "sms",
+       "phone_call",
+       "website"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "transfer_completed",
+        "credentials_disclosed_accounts_exposed",
+        "one_time_code_disclosed",
+        "scammer_requesting_further_code"
+       ],
+       "vulnerability": [
+        "distress",
+        "elderly",
+        "social_isolation",
+        "under_pressure_from_scammer"
+       ],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [
+        "0400 000 000"
+       ],
+       "urls": [],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": [
+        "Example Bank"
+       ]
+      },
+      "specialistFinding": {
+       "agent": "telecom",
+       "risks": [
+        "Scam SMS appeared in the existing bank message thread, which indicates sender-ID spoofing [TL-G3].",
+        "Caller at 0400 000 000 is still contacting the customer and pressing for another one-time code [TL-G1].",
+        "Customer is elderly, distressed and under pressure, which raises the chance of further disclosure.",
+        "No telecom indicators of SIM-swap or porting are recorded (telecomRisk false), but this has not been confirmed with the customer [TL-G2]."
+       ],
+       "recommendedNextSteps": [
+        "Record the originating number 0400 000 000 exactly as received, and record the SMS sender ID exactly as shown in the bank thread [TL-G1].",
+        "Lodge 0400 000 000 with the telco scam-reporting channel so it can be assessed for blocking; the AI does not block numbers [TL-G1].",
+        "Tell the customer that the SMS appearing in her bank's message thread does not prove it came from the bank [TL-G3].",
+        "Ask the customer whether she has lost mobile service or received any porting or SIM-change messages; if yes, treat as a potential SIM swap and urgently contact her carrier for a port-out lock and account-change check [TL-G2].",
+        "Ask whether the caller asked her to install software or share her screen; if yes, recommend she disconnect the device from the internet and refer it to the digital-platform/IT partner before any further banking use [TL-G4].",
+        "Ask the customer to note and report the exact number of any further calls or texts, and record each originating number as received so it can be lodged [TL-G1]."
+       ],
+       "missingInformation": [
+        "Whether the customer installed any software or shared her screen during the call [TL-G4].",
+        "Whether the customer has lost mobile service or received porting or SIM-change messages [TL-G2].",
+        "Exact sender ID text of the SMS as it appeared in the bank thread [TL-G3].",
+        "Whether the caller's ongoing contact uses 0400 000 000 or other numbers [TL-G1].",
+        "Telecom guidance does not cover the website link or the withheld transfer account; these need other agents' guidance."
+       ],
+       "guidanceCited": [
+        "TL-G1",
+        "TL-G2",
+        "TL-G3",
+        "TL-G4"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "Spoofed SMS and scam-number indicators are clear, but whether device access or SIM-swap occurred is unknown and some fields are withheld."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "digital_platform",
+     "label": "Digital platform",
+     "reason": "Specialist agent activated by routing rules",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "compromisedInformation",
+      "incidentOngoing",
+      "indicators (redacted)",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe [account withheld] The caller is reportedly still contacting her and asking for another code.",
+      "scamType": "impersonation",
+      "channels": [
+       "sms",
+       "phone_call",
+       "website"
+      ],
+      "compromisedInformation": [
+       "online banking login details",
+       "one-time SMS code"
+      ],
+      "incidentOngoing": true,
+      "indicators": {
+       "urgency": "high",
+       "urgencyReasons": [
+        "incident_ongoing",
+        "transfer_completed",
+        "credentials_disclosed_accounts_exposed",
+        "one_time_code_disclosed",
+        "scammer_requesting_further_code"
+       ],
+       "vulnerability": [
+        "distress",
+        "elderly",
+        "social_isolation",
+        "under_pressure_from_scammer"
+       ],
+       "telecomRisk": false
+      },
+      "entities": {
+       "phoneNumbers": [],
+       "urls": [
+        "examplebank-secure.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": [
+        "Example Bank"
+       ]
+      },
+      "specialistFinding": {
+       "agent": "digital_platform",
+       "risks": [
+        "Online banking login credentials were disclosed on a lookalike page, so the attacker may still have access to the account.",
+        "The caller is still in contact and asking for another SMS code, which could enable further account access or transfers.",
+        "The lookalike domain examplebank-secure.example is actively used to harvest credentials and may still be live.",
+        "The customer is elderly, distressed and socially isolated, which raises the risk of further compliance with the scammer."
+       ],
+       "recommendedNextSteps": [
+        "Record the URL exactly as examplebank-secure.example and submit it to the platform/host abuse channel for takedown assessment [DP-G1].",
+        "Advise the customer not to revisit examplebank-secure.example or any link from the SMS [DP-G1].",
+        "Arrange a password reset for the online banking login, completed through the bank's official channel and not the link provided by the caller [DP-G2].",
+        "Ask the customer to enable two-factor authentication on the online banking profile [DP-G2].",
+        "Review active sessions and registered recovery details (phone, email) on the account for unrecognised devices or changes [DP-G2].",
+        "Ask the customer whether the same password is used on any email or social-media accounts, and if so, reset those too [DP-G2].",
+        "Ask the customer to warn any contacts who may receive messages from her accounts that they may be targeted by similar scams [DP-G2].",
+        "Ask the customer to preserve the SMS thread, call log and any screenshots of the lookalike page as evidence [DP-G3]."
+       ],
+       "missingInformation": [
+        "Sender ID or phone number of the SMS and the callback number used by the caller (phoneNumbers is empty).",
+        "Whether the customer has any email or social-media credentials that were disclosed, and whether the same password is used elsewhere.",
+        "Whether recovery details (phone/email) or session devices on the banking profile have already been changed by the caller.",
+        "Whether the lookalike page was captured with its full URL, page content, or any hosting details.",
+        "No guidance covers reporting an SMS sender impersonating a bank or phone-based impersonation; escalate to the appropriate channel.",
+        "No guidance covers advice on refusing caller-requested codes; confirm the frontline script with the team."
+       ],
+       "guidanceCited": [
+        "DP-G1",
+        "DP-G2",
+        "DP-G3"
+       ],
+       "confidence": "medium",
+       "confidenceRationale": "Guidance covers the malicious URL and the credential compromise, but not SMS sender spoofing or phone-based impersonation, and key details about the lookalike page and recovery changes are missing."
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "government_reporting",
+     "label": "Government scam-reporting service",
+     "reason": "Strongly suspected impersonation scam with a reported loss, for national reporting and trend data.",
+     "fieldsShared": [
+      "caseId",
+      "scamType",
+      "channels",
+      "incidentOngoing",
+      "entities.phoneNumbers",
+      "entities.urls",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "scamType": "impersonation",
+      "channels": [
+       "sms",
+       "phone_call",
+       "website"
+      ],
+      "incidentOngoing": true,
+      "entities": {
+       "phoneNumbers": [
+        "0400 000 000"
+       ],
+       "urls": [
+        "examplebank-secure.example"
+       ],
+       "onlineHandles": [],
+       "organisationsImpersonated": [
+        "Example Bank"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "identity_recovery",
+     "label": "Identity-recovery / victim-support organisation",
+     "reason": "Banking credentials were disclosed and the customer is distressed.",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "compromisedInformation",
+      "indicators.urgency",
+      "indicators.vulnerability"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe [account withheld] The caller is reportedly still contacting her and asking for another code.",
+      "scamType": "impersonation",
+      "compromisedInformation": [
+       "online banking login details",
+       "one-time SMS code"
+      ],
+      "indicators": {
+       "urgency": "high",
+       "vulnerability": [
+        "distress",
+        "elderly",
+        "social_isolation",
+        "under_pressure_from_scammer"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "community_support",
+     "label": "Community support organisation",
+     "reason": "Vulnerability indicators are present: elderly, socially isolated, under pressure from the scammer.",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "indicators.urgency",
+      "indicators.vulnerability"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe [account withheld] The caller is reportedly still contacting her and asking for another code.",
+      "indicators": {
+       "urgency": "high",
+       "vulnerability": [
+        "distress",
+        "elderly",
+        "social_isolation",
+        "under_pressure_from_scammer"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    },
+    {
+     "organisationType": "law_enforcement",
+     "label": "Law enforcement",
+     "reason": "Only if the organisation's policy requires reporting a loss of this kind; the employee should check the policy.",
+     "fieldsShared": [
+      "caseId",
+      "summary (redacted)",
+      "scamType",
+      "channels",
+      "financialLoss",
+      "compromisedInformation",
+      "incidentOngoing",
+      "entities.phoneNumbers",
+      "entities.urls",
+      "entities.bankAccounts",
+      "entities.onlineHandles",
+      "entities.organisationsImpersonated"
+     ],
+     "record": {
+      "caseId": "SSA-20261106-7EIV",
+      "summary": "An elderly customer received an SMS appearing in the same thread as her usual bank messages, warning of a suspicious login and directing her to call a number or visit a link. She called the number, and a man claiming to be from the bank's fraud team guided her through logging in on a page he provided and had her read back an SMS code. A transfer to a so-called safe account followed. The caller is reportedly still contacting her and asking for another code.",
+      "scamType": "impersonation",
+      "channels": [
+       "sms",
+       "phone_call",
+       "website"
+      ],
+      "financialLoss": {
+       "reported": true,
+       "amountAud": 4200,
+       "paymentMethod": "bank transfer to a so-called 'safe account'"
+      },
+      "compromisedInformation": [
+       "online banking login details",
+       "one-time SMS code"
+      ],
+      "incidentOngoing": true,
+      "entities": {
+       "phoneNumbers": [
+        "0400 000 000"
+       ],
+       "urls": [
+        "examplebank-secure.example"
+       ],
+       "bankAccounts": [],
+       "onlineHandles": [],
+       "organisationsImpersonated": [
+        "Example Bank"
+       ]
+      },
+      "preparedBy": "ScamSafe Assist (AI) — pending employee approval"
+     }
+    }
+   ],
+   "disclaimer": "AI-generated recommendation for review by an authorised frontline employee. The employee is responsible for verifying, communicating with the affected person and initiating any action within their authority. This tool has not confirmed that a scam occurred and has taken no action."
+  },
+  "timingMs": {
+   "intake": 15168,
+   "routing": 0,
+   "specialists": 8652,
+   "coordinator": 26546
+  },
+  "usage": {
+   "intake": {
+    "inputTokens": 1584,
+    "outputTokens": 2069
+   },
+   "specialist:banking": {
+    "inputTokens": 1430,
+    "outputTokens": 1467
+   },
+   "specialist:telecom": {
+    "inputTokens": 1300,
+    "outputTokens": 1758
+   },
+   "specialist:digital_platform": {
+    "inputTokens": 1306,
+    "outputTokens": 1709
+   },
+   "coordinator": {
+    "inputTokens": 4931,
+    "outputTokens": 3845
+   }
+  }
+ }
+}
