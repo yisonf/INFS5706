@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { newEvent, type AuditEvent } from "@/lib/audit";
 import type { IntakeResult } from "@/lib/pipeline";
 import { SAMPLE_CASES } from "@/lib/sampleCases";
 import type {
@@ -55,7 +56,13 @@ type FailedStep =
 type Phase =
   | { kind: "idle" }
   | { kind: "intake" }
-  | { kind: "clarify"; intake: IntakeResult; report: ScamReport }
+  | {
+      kind: "clarify";
+      intake: IntakeResult;
+      report: ScamReport;
+      /** Set when an employee sent the case back or re-opened it (DEF-05). */
+      reopened?: { reason: string; mode: "sent_back" | "correction" };
+    }
   | { kind: "analysing"; intake: IntakeResult }
   | { kind: "done"; result: PipelineResult; intake: IntakeResult }
   | { kind: "error"; message: string; retryable: boolean; failed: FailedStep };
@@ -112,8 +119,14 @@ export default function Home() {
   const [report, setReport] = useState<ScamReport>(EMPTY);
   const [disclosed, setDisclosed] = useState("");
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
+  /** Audit trail per case id (DEF-05). Session-only in the prototype. */
+  const [auditByCase, setAuditByCase] = useState<Record<string, AuditEvent[]>>({});
 
   const busy = phase.kind === "intake" || phase.kind === "analysing";
+
+  function audit(e: AuditEvent) {
+    setAuditByCase((m) => ({ ...m, [e.caseId]: [...(m[e.caseId] ?? []), e] }));
+  }
 
   function loadSample(i: number) {
     const r = SAMPLE_CASES[i].report;
@@ -140,9 +153,38 @@ export default function Home() {
         report: r,
         ...opts,
       });
+      const caseId = intake.caseRecord.caseId;
+      audit(
+        newEvent({
+          caseId,
+          actor: "employee",
+          action: opts.clarifications ? "clarification_provided" : "intake_submitted",
+          detail: opts.clarifications
+            ? `Round ${intake.round}: clarifications added and report re-extracted.`
+            : `Round ${intake.round}: report submitted for AI-assisted analysis.`,
+        }),
+      );
       if (intake.needsClarification) {
+        audit(
+          newEvent({
+            caseId,
+            actor: "system",
+            action: "clarification_requested",
+            detail: `${intake.caseRecord.missingInformation.length} item(s) missing; urgency ${intake.caseRecord.indicators.urgency}.`,
+          }),
+        );
         setPhase({ kind: "clarify", intake, report: r });
       } else {
+        if (intake.clarificationReason?.includes("fast-tracked")) {
+          audit(
+            newEvent({
+              caseId,
+              actor: "system",
+              action: "clarification_fast_tracked",
+              detail: intake.clarificationReason,
+            }),
+          );
+        }
         await runAnalysis(intake);
       }
     } catch (err) {
@@ -166,6 +208,14 @@ export default function Home() {
         timingMs: intake.timingMs,
         usage: intake.usage,
       });
+      audit(
+        newEvent({
+          caseId: result.caseRecord.caseId,
+          actor: "system",
+          action: "analysis_completed",
+          detail: `Specialists: ${result.routing.activatedAgents.join(", ") || "none"}; urgency ${result.assessment.urgency}; ${result.assessment.handovers.length} handover(s) prepared (locked).`,
+        }),
+      );
       setPhase({ kind: "done", result, intake });
     } catch (err) {
       const { message, retryable } = describeError(err);
@@ -181,6 +231,48 @@ export default function Home() {
   function retry(failed: FailedStep) {
     if (failed.step === "intake") return runIntake(failed.report, failed.opts);
     return runAnalysis(failed.intake);
+  }
+
+  /** Employee chose to proceed without clarifying — recorded (DEF-05). */
+  function skipClarification(intake: IntakeResult, reason: string) {
+    audit(
+      newEvent({
+        caseId: intake.caseRecord.caseId,
+        actor: "employee",
+        action: "clarification_skipped",
+        reason,
+        detail: `${intake.caseRecord.missingInformation.length} item(s) still missing.`,
+      }),
+    );
+    return runAnalysis(intake);
+  }
+
+  /**
+   * "Send back" or "Correct information" from the review screen: re-open the
+   * case at the clarification step under the same case id, with the original
+   * report, so the employee can add what was missing (DEF-05).
+   */
+  function reopen(
+    intake: IntakeResult,
+    mode: "sent_back" | "correction",
+    reason: string,
+  ) {
+    if (mode === "correction") {
+      audit(
+        newEvent({
+          caseId: intake.caseRecord.caseId,
+          actor: "employee",
+          action: "correction_requested",
+          reason,
+        }),
+      );
+    }
+    setPhase({
+      kind: "clarify",
+      intake: { ...intake, needsClarification: true },
+      report: currentReport(),
+      reopened: { reason, mode },
+    });
   }
 
   async function submit(e: React.FormEvent) {
@@ -336,7 +428,23 @@ export default function Home() {
         </form>
 
         <section>
-          <StageTracker phase={phase} />
+          <StageTracker
+            phase={phase}
+            clarified={(() => {
+              const id =
+                phase.kind === "done"
+                  ? phase.result.caseRecord.caseId
+                  : phase.kind === "analysing" || phase.kind === "clarify"
+                    ? phase.intake.caseRecord.caseId
+                    : null;
+              return Boolean(
+                id &&
+                  (auditByCase[id] ?? []).some(
+                    (e) => e.action === "clarification_requested",
+                  ),
+              );
+            })()}
+          />
 
           {phase.kind === "idle" && (
             <p className="text-sm text-zinc-500">
@@ -403,6 +511,7 @@ export default function Home() {
           {phase.kind === "clarify" && (
             <ClarificationPanel
               intake={phase.intake}
+              reopened={phase.reopened}
               onResubmit={(clarifications) =>
                 runIntake(phase.report, {
                   caseId: phase.intake.caseRecord.caseId,
@@ -410,7 +519,7 @@ export default function Home() {
                   round: phase.intake.round + 1,
                 })
               }
-              onProceed={() => runAnalysis(phase.intake)}
+              onProceed={(reason) => skipClarification(phase.intake, reason)}
             />
           )}
 
@@ -423,12 +532,28 @@ export default function Home() {
 
           {phase.kind === "done" && (
             <>
-              {phase.intake.clarificationReason && (
-                <p className="mb-3 rounded border border-zinc-200 bg-zinc-50 p-2 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-                  Intake decision: {phase.intake.clarificationReason}
-                </p>
-              )}
-              <ReviewPanel result={phase.result} />
+              {(() => {
+                const log = auditByCase[phase.result.caseRecord.caseId] ?? [];
+                const skipped = log.find((e) => e.action === "clarification_skipped");
+                const provided = log.filter((e) => e.action === "clarification_provided").length;
+                const text = skipped
+                  ? `Clarification skipped by employee — "${skipped.reason}"`
+                  : provided > 0
+                    ? `${provided} clarification round(s) completed before analysis.`
+                    : phase.intake.clarificationReason;
+                return text ? (
+                  <p className="mb-3 rounded border border-zinc-200 bg-zinc-50 p-2 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+                    Intake decision: {text}
+                  </p>
+                ) : null;
+              })()}
+              <ReviewPanel
+                result={phase.result}
+                audit={auditByCase[phase.result.caseRecord.caseId] ?? []}
+                onAudit={audit}
+                onSendBack={(reason) => reopen(phase.intake, "sent_back", reason)}
+                onCorrect={(reason) => reopen(phase.intake, "correction", reason)}
+              />
             </>
           )}
         </section>
@@ -438,7 +563,14 @@ export default function Home() {
 }
 
 /** Shows where the case is in the six-stage workflow. */
-function StageTracker({ phase }: { phase: Phase }) {
+function StageTracker({
+  phase,
+  clarified,
+}: {
+  phase: Phase;
+  /** Whether the clarification step actually happened on this case. */
+  clarified: boolean;
+}) {
   const stages = [
     "Intake",
     "Intake agent",
@@ -463,8 +595,7 @@ function StageTracker({ phase }: { phase: Phase }) {
         : 4
       : active[phase.kind];
   const skippedClarify =
-    (phase.kind === "analysing" || phase.kind === "done") &&
-    !phase.intake.clarificationReason?.includes("returned to the employee");
+    (phase.kind === "analysing" || phase.kind === "done") && !clarified;
   return (
     <ol className="mb-4 flex flex-wrap gap-1 text-[11px]">
       {stages.map((s, i) => {
@@ -503,24 +634,38 @@ function StageTracker({ phase }: { phase: Phase }) {
  */
 function ClarificationPanel({
   intake,
+  reopened,
   onResubmit,
   onProceed,
 }: {
   intake: IntakeResult;
+  reopened?: { reason: string; mode: "sent_back" | "correction" };
   onResubmit: (clarifications: string) => void;
-  onProceed: () => void;
+  onProceed: (reason: string) => void;
 }) {
   const [text, setText] = useState("");
+  const [skipReason, setSkipReason] = useState("");
+  const [skipping, setSkipping] = useState(false);
   const c = intake.caseRecord;
   return (
     <div className="space-y-4 text-sm">
       <div className="rounded border border-amber-300 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/40">
         <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-300">
-          Returned for clarification (round {intake.round})
+          {reopened
+            ? reopened.mode === "sent_back"
+              ? `Sent back by employee (round ${intake.round})`
+              : `Re-opened to correct information (round ${intake.round})`
+            : `Returned for clarification (round ${intake.round})`}
         </h3>
         <p className="text-xs text-amber-900 dark:text-amber-200">
-          {intake.clarificationReason}
+          {reopened ? reopened.reason : intake.clarificationReason}
         </p>
+        {reopened && (
+          <p className="mt-1 text-xs text-amber-900 dark:text-amber-200">
+            Add the missing or corrected details below; the case will be
+            re-extracted under the same case id and re-analysed.
+          </p>
+        )}
       </div>
 
       <div className="rounded border border-zinc-200 p-3 dark:border-zinc-800">
@@ -586,14 +731,40 @@ function ClarificationPanel({
         >
           Add clarifications and re-extract
         </button>
-        <button
-          type="button"
-          onClick={onProceed}
-          className="rounded border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
-        >
-          Proceed without — information unavailable
-        </button>
+        {!reopened && (
+          <button
+            type="button"
+            onClick={() => setSkipping((v) => !v)}
+            className="rounded border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          >
+            Proceed without — information unavailable
+          </button>
+        )}
       </div>
+
+      {skipping && (
+        <div className="rounded border border-zinc-300 p-3 dark:border-zinc-700">
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Why are you proceeding without this information? (recorded)
+            </span>
+            <textarea
+              className="input min-h-16"
+              value={skipReason}
+              onChange={(e) => setSkipReason(e.target.value)}
+              placeholder="e.g. Customer has left the branch and cannot be reached; proceeding on what we have."
+            />
+          </label>
+          <button
+            type="button"
+            disabled={skipReason.trim().length < 10}
+            onClick={() => onProceed(skipReason.trim())}
+            className="mt-2 rounded bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          >
+            Confirm and proceed
+          </button>
+        </div>
+      )}
     </div>
   );
 }

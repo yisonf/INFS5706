@@ -25,7 +25,7 @@ A working prototype of an AI-enabled decision-support tool for **authorised fron
 | 3 Router | **Deterministic rules** decide which specialists to activate and apply an **access-control policy** so each specialist sees only permitted fields. Writes a disclosure log. High urgency is *fast-tracked*, not bypassed. | `src/lib/router.ts` |
 | 4 Specialists | Banking / Telecom / Digital-platform agents each analyse their filtered view against their own synthetic guidance, citing guidance ids and reporting confidence | `src/lib/agents/specialist.ts`, `src/lib/guidance/` |
 | 5 Coordinator | Merges findings, surfaces conflicts and low-confidence items for human review, prioritises actions, drafts wording for the affected person, and builds per-organisation **handover records** using the same access policy | `src/lib/agents/coordinator.ts` |
-| 6 Human review | Employee sees the recommendation first, can inspect the full trace, and must record an explicit decision. Nothing is transmitted. | `src/app/review.tsx` |
+| 6 Human review | Employee sees the recommendation first, can inspect the full trace, and must record an explicit, reasoned decision. Handovers stay locked until approval; every action is written to a per-case audit log. "Send back" and "Correct information" return the case to clarification under the same id. Nothing is transmitted. | `src/app/review.tsx`, `src/lib/audit.ts` |
 
 The router is plain TypeScript with unit tests (`npm test`) — the sensitive-data boundary doesn't depend on a model.
 

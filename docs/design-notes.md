@@ -45,7 +45,7 @@ Implemented as drawn: after the intake agent runs, if `missingInformation` is no
 ## Assumptions and limitations (for the oral defence)
 
 - Guidance is synthetic and small; a real deployment would retrieve from each organisation's maintained policy store.
-- No persistence: cases live only in the browser session. A real deployment needs an audited case store with role-based access.
+- No persistence: cases and the audit log live only in the browser session. A real deployment needs an audited case store with role-based access and an identified user, not the generic "employee" actor used here.
 - The access policy is field-level, not content-level; a real system would also redact PII inside free text.
 - The LLM can still be wrong; confidence and human review are mitigations, not guarantees.
 - Latency is 15–40 s per case with sequential intake → coordinator; acceptable for a desk tool, not for live-call use without streaming.
@@ -63,6 +63,7 @@ Implemented as drawn: after the intake agent runs, if `missingInformation` is no
 | DEF-10 | Intake outputs `indicators.telecomRisk`; rule TEL-03 activates telecom on it. |
 | DEF-11 | `entities.accountsOrHandles` split into `bankAccounts` (→ BANK-04) and `onlineHandles` (→ DIG-02). BANK-02 tightened so "email account" no longer routes to banking. |
 | DEF-12 | Errors keep the current step and input; Retry resends only the failed step; network loss gets a plain-English message. |
+| DEF-05 | Human review rebuilt (`src/lib/audit.ts`, `src/app/review.tsx`): every decision needs a reason and is written to a per-case audit log (actor, action, reason, time); wording edits are saved with the decision and an approval with edits is recorded as such; handover records are locked (organisations and fields listed, contents hidden) until an approving decision releases them; "Send back" returns the case to clarification under the same case id with the employee's reason shown; skipping clarification requires a reason and is logged; "Correct information" re-opens any case — including fast-tracked ones — for re-extraction. Audit log is session-only in the prototype. |
 | DEF-02 | `.env.example` committed. |
 | IMP-01/02/03/04/05 | Prompt and wording tweaks; clarification cap allows two rounds. |
 
