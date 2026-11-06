@@ -14,6 +14,11 @@ type Rule = {
   when: (c: CaseRecord) => boolean;
 };
 
+// Must name something specifically financial. A bare "account" is not enough
+// (an "email account password" is a digital-platform matter, not banking).
+const BANKING_CREDENTIAL =
+  /\b(bank(ing)?|credit card|debit card|card (number|details|pin)|cvv|pin\b|passcode|one[- ]?time (code|password|passcode)|otp|payid|bsb|internet banking|netbank|bank account)\b/i;
+
 export const ROUTING_RULES: Rule[] = [
   {
     id: "BANK-01 financial loss reported",
@@ -23,10 +28,7 @@ export const ROUTING_RULES: Rule[] = [
   {
     id: "BANK-02 banking credentials or payment details compromised",
     agent: "banking",
-    when: (c) =>
-      c.compromisedInformation.some((i) =>
-        /bank|card|account|pin|passcode|one[- ]?time|otp|payid|bsb/i.test(i),
-      ),
+    when: (c) => c.compromisedInformation.some((i) => BANKING_CREDENTIAL.test(i)),
   },
   {
     id: "BANK-03 investment or payment-redirect scam type",
@@ -36,18 +38,28 @@ export const ROUTING_RULES: Rule[] = [
       c.scamType === "invoice_or_payment_redirect",
   },
   {
-    id: "TEL-01 contact via SMS or phone call",
+    id: "BANK-04 payee bank accounts identified",
+    agent: "banking",
+    when: (c) => c.entities.bankAccounts.length > 0,
+  },
+  {
+    id: "TEL-01 scammer contacted via SMS or phone call",
     agent: "telecom",
     when: (c) =>
       c.channels.includes("sms") || c.channels.includes("phone_call"),
   },
   {
-    id: "TEL-02 phone numbers identified",
+    id: "TEL-02 scammer phone numbers identified",
     agent: "telecom",
     when: (c) => c.entities.phoneNumbers.length > 0,
   },
   {
-    id: "DIG-01 contact via social media, website or email",
+    id: "TEL-03 telecom risk indicator (loss of service / SIM or port-out)",
+    agent: "telecom",
+    when: (c) => c.indicators.telecomRisk === true,
+  },
+  {
+    id: "DIG-01 scammer contacted via social media, website or email",
     agent: "digital_platform",
     when: (c) =>
       c.channels.includes("social_media") ||
@@ -55,10 +67,19 @@ export const ROUTING_RULES: Rule[] = [
       c.channels.includes("email"),
   },
   {
-    id: "DIG-02 URLs or account handles identified",
+    id: "DIG-02 URLs or online handles identified",
     agent: "digital_platform",
     when: (c) =>
-      c.entities.urls.length > 0 || c.entities.accountsOrHandles.length > 0,
+      c.entities.urls.length > 0 || c.entities.onlineHandles.length > 0,
+  },
+  {
+    id: "DIG-03 identity theft or identity documents disclosed",
+    agent: "digital_platform",
+    when: (c) =>
+      c.scamType === "identity_theft" ||
+      c.compromisedInformation.some((i) =>
+        /licen[cs]e|passport|medicare|identity document|tax file|tfn/i.test(i),
+      ),
   },
 ];
 
@@ -93,19 +114,51 @@ export const ACCESS_POLICY: Record<SpecialistKind, (keyof CaseRecord)[]> = {
     "summary",
     "scamType",
     "channels",
+    "compromisedInformation",
     "incidentOngoing",
     "indicators",
     "entities",
   ],
 };
 
-/** Entity sub-fields each specialist may see; others are redacted. */
+/** Entity sub-fields each specialist may see; others are emptied. */
 const ENTITY_POLICY: Record<SpecialistKind, (keyof CaseRecord["entities"])[]> =
   {
-    banking: ["organisationsImpersonated"],
+    banking: ["bankAccounts", "organisationsImpersonated"],
     telecom: ["phoneNumbers", "organisationsImpersonated"],
-    digital_platform: ["urls", "accountsOrHandles", "organisationsImpersonated"],
+    digital_platform: ["urls", "onlineHandles", "organisationsImpersonated"],
   };
+
+/**
+ * DEF-03 — free-text fields (summary, urgencyReasons, vulnerability) can
+ * carry details the field-level policy would otherwise withhold. Each agent
+ * gets a redacted copy: anything it is not entitled to by ENTITY_POLICY or
+ * ACCESS_POLICY is replaced with a placeholder.
+ */
+const PATTERNS = {
+  amount:
+    /(?:AUD?\s?\$?|\$|A\$)\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:k|K|million|m))?|\b\d[\d,]*(?:\.\d+)?\s?(?:dollars|AUD)\b/g,
+  phone:
+    /(?:\+?61\s?|\b0)(?:[23478]\)?[\s-]?)?\d(?:[\s-]?\d){7,9}\b|\b1[38]00[\s-]?\d{3}[\s-]?\d{3}\b/g,
+  url: /\b(?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:com|net|org|au|example|io|co|info|app|xyz)(?:\/\S*)?/gi,
+  handle: /(?<![\w.])@[\w.]{2,}/g,
+  bankAccount: /\b(?:bsb|account|acct|payid)\b[\s:#-]*[\w@.-]{4,}/gi,
+};
+
+export function redactForAgent(text: string, agent: SpecialistKind): string {
+  let out = text;
+  const can = (f: keyof CaseRecord["entities"]) => ENTITY_POLICY[agent].includes(f);
+  if (agent !== "banking") {
+    out = out.replace(PATTERNS.amount, "[amount withheld]");
+  }
+  if (!can("bankAccounts")) {
+    out = out.replace(PATTERNS.bankAccount, "[account withheld]");
+  }
+  if (!can("phoneNumbers")) out = out.replace(PATTERNS.phone, "[number withheld]");
+  if (!can("urls")) out = out.replace(PATTERNS.url, "[link withheld]");
+  if (!can("onlineHandles")) out = out.replace(PATTERNS.handle, "[handle withheld]");
+  return out;
+}
 
 export function filterForAgent(
   record: CaseRecord,
@@ -118,7 +171,8 @@ export function filterForAgent(
       const ents: CaseRecord["entities"] = {
         phoneNumbers: [],
         urls: [],
-        accountsOrHandles: [],
+        bankAccounts: [],
+        onlineHandles: [],
         organisationsImpersonated: [],
       };
       for (const sub of ENTITY_POLICY[agent]) {
@@ -126,6 +180,20 @@ export function filterForAgent(
         fieldsShared.push(`entities.${sub}`);
       }
       view.entities = ents;
+    } else if (key === "summary") {
+      view.summary = redactForAgent(record.summary, agent);
+      fieldsShared.push("summary (redacted)");
+    } else if (key === "indicators") {
+      view.indicators = {
+        ...record.indicators,
+        urgencyReasons: record.indicators.urgencyReasons.map((r) =>
+          redactForAgent(r, agent),
+        ),
+        vulnerability: record.indicators.vulnerability.map((r) =>
+          redactForAgent(r, agent),
+        ),
+      };
+      fieldsShared.push("indicators (redacted)");
     } else {
       // Assigning a known key from the same record type; cast keeps TS happy
       // without weakening the policy table's typing.
@@ -147,11 +215,14 @@ export function route(record: CaseRecord): RoutingDecision {
     }
   }
 
-  // Fallback: if nothing matched, the digital-platform agent handles generic
-  // cases so the employee still gets a recommendation rather than silence.
-  if (activated.size === 0) {
-    rulesFired.push("DEFAULT-01 no specific rule matched → digital_platform");
-    activated.add("digital_platform");
+  // DEF-06: no rule matched → do not guess a specialist. Flag for human
+  // judgement; the coordinator still runs so the employee gets a structured
+  // package and the referral directory, with no specialist findings.
+  const needsHumanJudgement = activated.size === 0;
+  if (needsHumanJudgement) {
+    rulesFired.push(
+      "NONE no routing rule matched — flagged for human judgement; no specialist activated",
+    );
   }
 
   const activatedAgents = Array.from(activated);
@@ -167,6 +238,7 @@ export function route(record: CaseRecord): RoutingDecision {
   return {
     activatedAgents,
     rulesFired,
+    needsHumanJudgement,
     filteredViews,
     disclosureLog,
     fastTrack: record.indicators.urgency === "high",

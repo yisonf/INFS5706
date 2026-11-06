@@ -45,12 +45,29 @@ const EMPTY: ScamReport = {
   description: "",
 };
 
+type IntakeOpts = { caseId?: string; clarifications?: string; round?: number };
+
+/** What to resend if the employee clicks Retry (DEF-12). */
+type FailedStep =
+  | { step: "intake"; report: ScamReport; opts: IntakeOpts }
+  | { step: "analyse"; intake: IntakeResult };
+
 type Phase =
   | { kind: "idle" }
   | { kind: "intake" }
   | { kind: "clarify"; intake: IntakeResult; report: ScamReport }
   | { kind: "analysing"; intake: IntakeResult }
-  | { kind: "done"; result: PipelineResult; intake: IntakeResult };
+  | { kind: "done"; result: PipelineResult; intake: IntakeResult }
+  | { kind: "error"; message: string; retryable: boolean; failed: FailedStep };
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly retryable: boolean,
+  ) {
+    super(message);
+  }
+}
 
 async function postJson<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(url, {
@@ -58,23 +75,43 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
-  let json: { error?: string; kind?: string } & T;
+  let json: { error?: string; kind?: string; retryable?: boolean } & T;
   try {
     json = await res.json();
   } catch {
-    throw new Error(
+    throw new ApiError(
       `The server returned an unexpected response (HTTP ${res.status}). Your input has been kept — please retry.`,
+      true,
     );
   }
-  if (!res.ok) throw new Error(json.error ?? `Request failed (HTTP ${res.status})`);
+  if (!res.ok) {
+    throw new ApiError(
+      json.error ?? `Request failed (HTTP ${res.status})`,
+      json.retryable ?? res.status >= 500,
+    );
+  }
   return json as T;
+}
+
+function describeError(err: unknown): { message: string; retryable: boolean } {
+  if (err instanceof ApiError) return { message: err.message, retryable: err.retryable };
+  if (err instanceof TypeError && /fetch/i.test(err.message)) {
+    return {
+      message:
+        "Network interrupted — the request did not reach the server. Your input has been kept; check your connection and retry.",
+      retryable: true,
+    };
+  }
+  return {
+    message: err instanceof Error ? err.message : String(err),
+    retryable: true,
+  };
 }
 
 export default function Home() {
   const [report, setReport] = useState<ScamReport>(EMPTY);
   const [disclosed, setDisclosed] = useState("");
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
-  const [error, setError] = useState<string | null>(null);
 
   const busy = phase.kind === "intake" || phase.kind === "analysing";
 
@@ -83,7 +120,6 @@ export default function Home() {
     setReport(r);
     setDisclosed(r.informationDisclosed.join(", "));
     setPhase({ kind: "idle" });
-    setError(null);
   }
 
   function currentReport(): ScamReport {
@@ -97,12 +133,8 @@ export default function Home() {
   }
 
   /** Stage 2. Pauses at the clarification screen if the record has gaps. */
-  async function runIntake(
-    r: ScamReport,
-    opts: { caseId?: string; clarifications?: string; round?: number } = {},
-  ) {
+  async function runIntake(r: ScamReport, opts: IntakeOpts = {}) {
     setPhase({ kind: "intake" });
-    setError(null);
     try {
       const intake = await postJson<IntakeResult>("/api/intake", {
         report: r,
@@ -114,15 +146,20 @@ export default function Home() {
         await runAnalysis(intake);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-      setPhase({ kind: "idle" });
+      const { message, retryable } = describeError(err);
+      // DEF-12: keep the step and its input so Retry resends exactly this.
+      setPhase({
+        kind: "error",
+        message,
+        retryable,
+        failed: { step: "intake", report: r, opts },
+      });
     }
   }
 
   /** Stages 3–5. */
   async function runAnalysis(intake: IntakeResult) {
     setPhase({ kind: "analysing", intake });
-    setError(null);
     try {
       const result = await postJson<PipelineResult>("/api/analyse", {
         caseRecord: intake.caseRecord,
@@ -131,9 +168,19 @@ export default function Home() {
       });
       setPhase({ kind: "done", result, intake });
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-      setPhase({ kind: "idle" });
+      const { message, retryable } = describeError(err);
+      setPhase({
+        kind: "error",
+        message,
+        retryable,
+        failed: { step: "analyse", intake },
+      });
     }
+  }
+
+  function retry(failed: FailedStep) {
+    if (failed.step === "intake") return runIntake(failed.report, failed.opts);
+    return runAnalysis(failed.intake);
   }
 
   async function submit(e: React.FormEvent) {
@@ -286,11 +333,6 @@ export default function Home() {
                 ? "Analysing…"
                 : "Submit for AI-assisted analysis"}
           </button>
-          {error && (
-            <p className="rounded border border-red-300 bg-red-50 p-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
-              {error}
-            </p>
-          )}
         </form>
 
         <section>
@@ -306,6 +348,56 @@ export default function Home() {
             <p className="text-sm text-zinc-500">
               Intake agent is extracting a standardised case record…
             </p>
+          )}
+
+          {phase.kind === "error" && (
+            <div className="space-y-3 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+              <p className="font-medium">
+                {phase.failed.step === "intake"
+                  ? "The intake step could not be completed."
+                  : "The analysis step could not be completed."}
+              </p>
+              <p>{phase.message}</p>
+              <div className="flex flex-wrap gap-2">
+                {phase.retryable && (
+                  <button
+                    type="button"
+                    onClick={() => retry(phase.failed)}
+                    className="rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600"
+                  >
+                    Retry this step
+                  </button>
+                )}
+                {phase.failed.step === "intake" && phase.failed.opts.caseId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Back to the clarification screen the employee came from,
+                      // with their original report intact.
+                      const f = phase.failed;
+                      if (f.step !== "intake") return;
+                      runIntake(f.report, {
+                        caseId: f.opts.caseId,
+                        round: (f.opts.round ?? 2) - 1,
+                      });
+                    }}
+                    className="rounded border border-red-300 px-3 py-1.5 text-sm hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+                  >
+                    Back to clarification
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setPhase({ kind: "idle" })}
+                  className="rounded border border-red-300 px-3 py-1.5 text-sm hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+                >
+                  Edit the report
+                </button>
+              </div>
+              <p className="text-xs opacity-80">
+                Your form input has been kept.
+              </p>
+            </div>
           )}
 
           {phase.kind === "clarify" && (
@@ -362,8 +454,14 @@ function StageTracker({ phase }: { phase: Phase }) {
     clarify: 2,
     analysing: 4,
     done: 6,
+    error: 0,
   };
-  const idx = active[phase.kind];
+  const idx =
+    phase.kind === "error"
+      ? phase.failed.step === "intake"
+        ? 1
+        : 4
+      : active[phase.kind];
   const skippedClarify =
     (phase.kind === "analysing" || phase.kind === "done") &&
     !phase.intake.clarificationReason?.includes("returned to the employee");

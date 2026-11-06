@@ -51,6 +51,21 @@ Implemented as drawn: after the intake agent runs, if `missingInformation` is no
 - Latency is 15–40 s per case with sequential intake → coordinator; acceptable for a desk tool, not for live-call use without streaming.
 - Embedding in member organisations: each org would run the same intake UI inside its existing case-management tool, with its own guidance pack and its own access-policy row.
 
+## Changes from the 2026-11-05 test log
+
+| Defect | Change |
+|---|---|
+| DEF-04 | `src/lib/urgency.ts` — rule-based urgency floor; rules can only raise the AI's rating, and the raise is recorded. |
+| DEF-08 | `src/lib/schemas.ts` — zod validation of every AI output and both request bodies; one retry on malformed output; refusal → 422 "invalid report". |
+| DEF-03 | Free-text fields (`summary`, `urgencyReasons`, `vulnerability`) are redacted per agent before sending — amounts, numbers, links, handles and accounts an agent isn't entitled to are replaced with placeholders. Intake is also told to keep figures out of prose. |
+| DEF-06 | No fallback specialist. When no rule matches, routing returns `needsHumanJudgement=true`, no specialist runs, and the coordinator prepares a general package with referrals. |
+| DEF-07 | `src/lib/handovers.ts` — a handover record for every referral organisation (government reporting, identity recovery, community support, law enforcement), each with its own field policy. |
+| DEF-10 | Intake outputs `indicators.telecomRisk`; rule TEL-03 activates telecom on it. |
+| DEF-11 | `entities.accountsOrHandles` split into `bankAccounts` (→ BANK-04) and `onlineHandles` (→ DIG-02). BANK-02 tightened so "email account" no longer routes to banking. |
+| DEF-12 | Errors keep the current step and input; Retry resends only the failed step; network loss gets a plain-English message. |
+| DEF-02 | `.env.example` committed. |
+| IMP-01/02/03/04/05 | Prompt and wording tweaks; clarification cap allows two rounds. |
+
 ## Possible extensions
 
 - Streaming stage-by-stage results to the UI

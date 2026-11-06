@@ -10,11 +10,11 @@ const baseRecord = (): CaseRecord => ({
   financialLoss: { reported: false, amountAud: null, paymentMethod: null },
   compromisedInformation: [],
   incidentOngoing: false,
-  indicators: { urgency: "low", urgencyReasons: ["AI reason"], vulnerability: [] },
+  indicators: { urgency: "low", urgencyReasons: ["AI reason"], vulnerability: [], telecomRisk: false },
   missingInformation: [],
   conflictingInformation: [],
   uncertainInformation: [],
-  entities: { phoneNumbers: [], urls: [], accountsOrHandles: [], organisationsImpersonated: [] },
+  entities: { phoneNumbers: [], urls: [], bankAccounts: [], onlineHandles: [], organisationsImpersonated: [] },
 });
 
 const baseReport = (): ScamReport => ({

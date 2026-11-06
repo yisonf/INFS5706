@@ -43,6 +43,11 @@ export function ReviewPanel({ result }: { result: PipelineResult }) {
             fast-tracked
           </span>
         )}
+        {r.needsHumanJudgement && (
+          <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+            needs human judgement — no specialist matched
+          </span>
+        )}
         {raisedByRule && (
           <span
             className="rounded bg-zinc-200 px-2 py-0.5 text-xs dark:bg-zinc-800"
@@ -222,6 +227,13 @@ export function ReviewPanel({ result }: { result: PipelineResult }) {
 
       {tab === "findings" && (
         <div className="space-y-4 text-sm">
+          {findings.length === 0 && (
+            <p className="text-zinc-500">
+              No specialist was activated — no routing rule matched this case.
+              The coordinator has prepared a general package; use your judgement
+              and the referrals.
+            </p>
+          )}
           {findings.map((f) => (
             <Block
               key={f.agent}
@@ -248,7 +260,11 @@ export function ReviewPanel({ result }: { result: PipelineResult }) {
             policy used for routing. Released only on employee approval.
           </p>
           {a.handovers.map((h) => (
-            <Block key={h.organisationType} title={`→ ${h.organisationType}`}>
+            <Block key={h.organisationType} title={`→ ${h.label}`}>
+              <p className="mb-1 text-xs text-zinc-500">{h.reason}</p>
+              <p className="mb-2 font-mono text-xs text-zinc-500">
+                fields: {h.fieldsShared.join(", ")}
+              </p>
               <Json value={h.record} />
             </Block>
           ))}

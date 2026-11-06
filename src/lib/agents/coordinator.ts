@@ -8,6 +8,12 @@
 import { REFERRAL_DIRECTORY } from "../guidance";
 import { askForJson, MODELS, type Usage } from "../llm";
 import { coordinatorDraftSchema } from "../schemas";
+import {
+  buildReferralHandover,
+  buildSpecialistHandover,
+  classifyReferral,
+  type Handover,
+} from "../handovers";
 import { filterForAgent } from "../router";
 import type {
   CaseRecord,
@@ -30,6 +36,7 @@ Rules:
 - Choose referrals from the directory provided; include the reason.
 - Quote guidance faithfully. Where guidance says the AI must not do something (e.g. initiate a hold or a block), that restriction applies to the AI only; the employee may escalate such actions to the appropriate team. Never rewrite an AI restriction as an employee restriction.
 - If the evidence suggests this may NOT be a scam, say so plainly in scamSummary and lower the urgency accordingly.
+- If no specialist ran because no routing rule matched, say so under itemsRequiringHumanReview, keep recommendations general, and lean on referrals. Do not invent specialist findings.
 
 Return JSON:
 {
@@ -54,6 +61,7 @@ ${JSON.stringify(record, null, 2)}
 
 ROUTING (rules fired): ${routing.rulesFired.join("; ")}
 Fast-tracked: ${routing.fastTrack}
+Needs human judgement (no routing rule matched, no specialist ran): ${routing.needsHumanJudgement}
 
 SPECIALIST FINDINGS:
 ${JSON.stringify(findings, null, 2)}
@@ -70,17 +78,37 @@ ${REFERRAL_DIRECTORY.map((r) => `- ${r.organisationType}: ${r.when}`).join("\n")
     stage: "coordinator",
   });
 
-  // Handover records are built deterministically from the router's access
-  // policy — not by the model — so what leaves the organisation is exactly
-  // what the policy permits, every time.
-  const handovers = routing.activatedAgents.map((agent) => ({
-    organisationType: agent,
-    record: {
-      ...filterForAgent(record, agent).view,
-      specialistFinding: findings.find((f) => f.agent === agent) ?? null,
-      preparedBy: "ScamSafe Assist (AI) — pending employee approval",
-    },
-  }));
+  // Handover records are built deterministically from the access policies —
+  // not by the model — so what leaves the organisation is exactly what the
+  // policy permits, every time. One per activated specialist, plus one per
+  // referral organisation the coordinator named (DEF-07).
+  const handovers: Handover[] = routing.activatedAgents.map((agent) => {
+    const { view, fieldsShared } = filterForAgent(record, agent);
+    return buildSpecialistHandover(
+      record,
+      agent,
+      view,
+      fieldsShared,
+      findings.find((f) => f.agent === agent) ?? null,
+    );
+  });
+  const seen = new Set<string>(handovers.map((h) => h.organisationType));
+  for (const ref of draft.referrals) {
+    const org = classifyReferral(ref.organisationType);
+    if (!org || seen.has(org)) continue;
+    seen.add(org);
+    if (org === "banking" || org === "telecom" || org === "digital_platform") {
+      // Referral to a specialist-type org that routing did not activate:
+      // give it the same filtered view, with no finding.
+      const { view, fieldsShared } = filterForAgent(record, org);
+      handovers.push({
+        ...buildSpecialistHandover(record, org, view, fieldsShared, null),
+        reason: ref.reason,
+      });
+    } else {
+      handovers.push(buildReferralHandover(record, org, ref.reason));
+    }
+  }
 
   return {
     assessment: {

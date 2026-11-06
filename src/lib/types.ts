@@ -65,6 +65,8 @@ export interface CaseRecord {
     urgency: Urgency;
     urgencyReasons: string[];
     vulnerability: string[]; // observed vulnerability indicators, may be empty
+    /** Loss of mobile service, unexpected porting/SIM messages, etc. (DEF-10) */
+    telecomRisk: boolean;
   };
   missingInformation: string[];
   conflictingInformation: string[];
@@ -72,7 +74,10 @@ export interface CaseRecord {
   entities: {
     phoneNumbers: string[];
     urls: string[];
-    accountsOrHandles: string[];
+    /** Bank/payment account identifiers (BSB, account no., PayID) — DEF-11 */
+    bankAccounts: string[];
+    /** Social media / email / platform handles — DEF-11 */
+    onlineHandles: string[];
     organisationsImpersonated: string[];
   };
 }
@@ -81,6 +86,8 @@ export interface CaseRecord {
 export interface RoutingDecision {
   activatedAgents: SpecialistKind[];
   rulesFired: string[];
+  /** No routing rule matched; the case needs human judgement (DEF-06). */
+  needsHumanJudgement: boolean;
   /** Per-agent, the access-filtered view of the case it is allowed to see. */
   filteredViews: Record<SpecialistKind, Partial<CaseRecord>>;
   /** Audit log: which fields each agent received. */
@@ -110,7 +117,13 @@ export interface ConsolidatedAssessment {
   risksAndUnresolvedIssues: string[];
   itemsRequiringHumanReview: string[];
   suggestedCommunicationToAffectedPerson: string;
-  handovers: { organisationType: string; record: Record<string, unknown> }[];
+  handovers: {
+    organisationType: string;
+    label: string;
+    reason: string;
+    fieldsShared: string[];
+    record: Record<string, unknown>;
+  }[];
   disclaimer: string;
 }
 

@@ -62,6 +62,7 @@ export const caseRecordSchema = z.object({
     urgency: urgencySchema,
     urgencyReasons: strArr,
     vulnerability: strArr,
+    telecomRisk: z.boolean().default(false),
   }),
   missingInformation: strArr,
   conflictingInformation: strArr,
@@ -70,13 +71,15 @@ export const caseRecordSchema = z.object({
     .object({
       phoneNumbers: strArr,
       urls: strArr,
-      accountsOrHandles: strArr,
+      bankAccounts: strArr,
+      onlineHandles: strArr,
       organisationsImpersonated: strArr,
     })
     .default({
       phoneNumbers: [],
       urls: [],
-      accountsOrHandles: [],
+      bankAccounts: [],
+      onlineHandles: [],
       organisationsImpersonated: [],
     }),
 });
