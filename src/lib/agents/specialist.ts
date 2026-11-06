@@ -4,7 +4,8 @@
  * against its own synthetic guidance. It recommends; it never acts.
  */
 import { guidanceAsText } from "../guidance";
-import { askForJson, MODELS } from "../llm";
+import { askForJson, MODELS, type Usage } from "../llm";
+import { specialistFindingSchema } from "../schemas";
 import type { CaseRecord, SpecialistFinding, SpecialistKind } from "../types";
 
 const ROLE: Record<SpecialistKind, string> = {
@@ -19,7 +20,7 @@ const ROLE: Record<SpecialistKind, string> = {
 export async function runSpecialist(
   agent: SpecialistKind,
   view: Partial<CaseRecord>,
-): Promise<SpecialistFinding> {
+): Promise<{ finding: SpecialistFinding; usage: Usage }> {
   const system = `${ROLE[agent]}
 
 You are part of ScamSafe Assist. You receive a PARTIAL case record — only the fields you are authorised to see. Do not speculate about withheld fields.
@@ -42,12 +43,15 @@ Return JSON:
   "confidenceRationale": string (one sentence)
 }`;
 
-  const finding = await askForJson<SpecialistFinding>({
+  const { data, usage } = await askForJson({
     model: MODELS.specialist,
     system,
     user: `Partial case record (access-filtered):\n${JSON.stringify(view, null, 2)}`,
+    schema: specialistFindingSchema,
     maxTokens: 4000,
+    stage: `${agent} specialist`,
   });
+  const finding = data as SpecialistFinding;
   finding.agent = agent;
-  return finding;
+  return { finding, usage };
 }

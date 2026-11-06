@@ -6,7 +6,8 @@
  * handover records using the SAME access policy the router applied.
  */
 import { REFERRAL_DIRECTORY } from "../guidance";
-import { askForJson, MODELS } from "../llm";
+import { askForJson, MODELS, type Usage } from "../llm";
+import { coordinatorDraftSchema } from "../schemas";
 import { filterForAgent } from "../router";
 import type {
   CaseRecord,
@@ -27,6 +28,8 @@ Rules:
 - Prioritise actions by (1) stopping ongoing harm, (2) containing exposure, (3) recovery, (4) reporting/referral.
 - Keep the communication draft plain-English, calm, non-blaming, and free of jargon. If vulnerability indicators are present, make it shorter and gentler and mention support options.
 - Choose referrals from the directory provided; include the reason.
+- Quote guidance faithfully. Where guidance says the AI must not do something (e.g. initiate a hold or a block), that restriction applies to the AI only; the employee may escalate such actions to the appropriate team. Never rewrite an AI restriction as an employee restriction.
+- If the evidence suggests this may NOT be a scam, say so plainly in scamSummary and lower the urgency accordingly.
 
 Return JSON:
 {
@@ -45,7 +48,7 @@ export async function runCoordinator(
   record: CaseRecord,
   routing: RoutingDecision,
   findings: SpecialistFinding[],
-): Promise<ConsolidatedAssessment> {
+): Promise<{ assessment: ConsolidatedAssessment; usage: Usage }> {
   const user = `CASE RECORD:
 ${JSON.stringify(record, null, 2)}
 
@@ -58,13 +61,13 @@ ${JSON.stringify(findings, null, 2)}
 REFERRAL DIRECTORY:
 ${REFERRAL_DIRECTORY.map((r) => `- ${r.organisationType}: ${r.when}`).join("\n")}`;
 
-  const draft = await askForJson<
-    Omit<ConsolidatedAssessment, "handovers" | "disclaimer">
-  >({
+  const { data: draft, usage } = await askForJson({
     model: MODELS.primary,
     system: SYSTEM,
     user,
+    schema: coordinatorDraftSchema,
     maxTokens: 8000,
+    stage: "coordinator",
   });
 
   // Handover records are built deterministically from the router's access
@@ -80,9 +83,20 @@ ${REFERRAL_DIRECTORY.map((r) => `- ${r.organisationType}: ${r.when}`).join("\n")
   }));
 
   return {
-    ...draft,
-    caseId: record.caseId,
-    handovers,
-    disclaimer: DISCLAIMER,
+    assessment: {
+      ...draft,
+      caseId: record.caseId,
+      // The record's urgency already includes the rule floor; never let the
+      // coordinator lower it.
+      urgency:
+        draft.urgency === "high" || record.indicators.urgency === "high"
+          ? "high"
+          : draft.urgency === "medium" || record.indicators.urgency === "medium"
+            ? "medium"
+            : "low",
+      handovers,
+      disclaimer: DISCLAIMER,
+    },
+    usage,
   };
 }

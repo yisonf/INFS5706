@@ -5,8 +5,10 @@
  * indicators. It does NOT recommend responses — that is the specialists' and
  * coordinator's job.
  */
-import { askForJson, MODELS } from "../llm";
+import { askForJson, MODELS, type Usage } from "../llm";
+import { caseRecordSchema } from "../schemas";
 import type { CaseRecord, ScamReport } from "../types";
+import { applyUrgencyFloor } from "../urgency";
 
 const SYSTEM = `You are the Intake agent in ScamSafe Assist, a decision-support tool for authorised frontline employees who receive reports of suspected scams.
 
@@ -48,7 +50,7 @@ export async function runIntake(
   report: ScamReport,
   caseId: string,
   clarifications?: string,
-): Promise<CaseRecord> {
+): Promise<{ record: CaseRecord; usage: Usage; urgencyRulesFired: string[] }> {
   const user = `caseId: ${caseId}
 Reporting organisation: ${report.reportingOrganisation}
 
@@ -77,11 +79,17 @@ ${clarifications.trim()}
       : ""
   }`;
 
-  const record = await askForJson<CaseRecord>({
+  const { data, usage } = await askForJson({
     model: MODELS.primary,
     system: SYSTEM,
     user,
+    schema: caseRecordSchema,
+    stage: "intake",
   });
+  const record = data as CaseRecord;
   record.caseId = caseId; // never trust the model with the identifier
-  return record;
+
+  // DEF-04: facts the employee recorded set a floor under the AI's rating.
+  const { rulesFired } = applyUrgencyFloor(record, report);
+  return { record, usage, urgencyRulesFired: rulesFired };
 }

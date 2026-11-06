@@ -58,8 +58,15 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error ?? "Request failed");
+  let json: { error?: string; kind?: string } & T;
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error(
+      `The server returned an unexpected response (HTTP ${res.status}). Your input has been kept — please retry.`,
+    );
+  }
+  if (!res.ok) throw new Error(json.error ?? `Request failed (HTTP ${res.status})`);
   return json as T;
 }
 
@@ -120,6 +127,7 @@ export default function Home() {
       const result = await postJson<PipelineResult>("/api/analyse", {
         caseRecord: intake.caseRecord,
         timingMs: intake.timingMs,
+        usage: intake.usage,
       });
       setPhase({ kind: "done", result, intake });
     } catch (err) {

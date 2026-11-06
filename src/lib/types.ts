@@ -120,4 +120,6 @@ export interface PipelineResult {
   findings: SpecialistFinding[];
   assessment: ConsolidatedAssessment;
   timingMs: Record<string, number>;
+  /** Token usage per stage, keyed e.g. "intake", "specialist:banking", "coordinator". */
+  usage: Record<string, { inputTokens: number; outputTokens: number }>;
 }

@@ -10,8 +10,13 @@ import type { PipelineResult } from "@/lib/types";
  * sends anything anywhere — the buttons record the employee's decision only.
  */
 export function ReviewPanel({ result }: { result: PipelineResult }) {
-  const { assessment: a, caseRecord: c, routing: r, findings, timingMs } =
+  const { assessment: a, caseRecord: c, routing: r, findings, timingMs, usage } =
     result;
+  const totalIn = Object.values(usage ?? {}).reduce((n, u) => n + u.inputTokens, 0);
+  const totalOut = Object.values(usage ?? {}).reduce((n, u) => n + u.outputTokens, 0);
+  const raisedByRule = c.indicators.urgencyReasons.find((x) =>
+    x.startsWith("Raised by rule"),
+  );
   const [decision, setDecision] = useState<string | null>(null);
   const [tab, setTab] = useState<
     "recommendation" | "record" | "routing" | "findings" | "handovers"
@@ -38,10 +43,23 @@ export function ReviewPanel({ result }: { result: PipelineResult }) {
             fast-tracked
           </span>
         )}
+        {raisedByRule && (
+          <span
+            className="rounded bg-zinc-200 px-2 py-0.5 text-xs dark:bg-zinc-800"
+            title={raisedByRule}
+          >
+            urgency set by rule
+          </span>
+        )}
         <span className="text-xs text-zinc-500">
           {Object.entries(timingMs)
             .map(([k, v]) => `${k} ${(v / 1000).toFixed(1)}s`)
             .join(" · ")}
+          {totalIn > 0 && (
+            <>
+              {" "}· {totalIn.toLocaleString()} in / {totalOut.toLocaleString()} out tokens
+            </>
+          )}
         </span>
       </div>
 
@@ -71,7 +89,7 @@ export function ReviewPanel({ result }: { result: PipelineResult }) {
 
       {tab === "recommendation" && (
         <div className="space-y-4 text-sm">
-          <Block title="Suspected scam — summary">
+          <Block title="Case summary">
             <p>{a.scamSummary}</p>
             <p className="mt-1 text-xs text-zinc-500">{a.priorityRationale}</p>
           </Block>
@@ -167,10 +185,16 @@ export function ReviewPanel({ result }: { result: PipelineResult }) {
             <ListBlock title="Conflicting" items={c.conflictingInformation} />
             <ListBlock title="Uncertain" items={c.uncertainInformation} />
           </div>
-          <ListBlock
-            title="Vulnerability indicators"
-            items={c.indicators.vulnerability}
-          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <ListBlock
+              title={`Urgency reasons (${c.indicators.urgency})`}
+              items={c.indicators.urgencyReasons}
+            />
+            <ListBlock
+              title="Vulnerability indicators"
+              items={c.indicators.vulnerability}
+            />
+          </div>
         </div>
       )}
 

@@ -1,41 +1,38 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import { errorResponse } from "@/lib/apiErrors";
 import { runIntakeStage } from "@/lib/pipeline";
-import type { ScamReport } from "@/lib/types";
+import { scamReportSchema } from "@/lib/schemas";
 
 export const maxDuration = 60;
 
-interface IntakeBody {
-  report: ScamReport;
-  caseId?: string;
-  clarifications?: string;
-  round?: number;
-}
+const bodySchema = z.object({
+  report: scamReportSchema,
+  caseId: z.string().regex(/^SSA-\d{8}-[A-Z0-9]{4}$/).optional(),
+  clarifications: z.string().max(5000).optional(),
+  round: z.number().int().min(1).max(10).optional(),
+});
 
 export async function POST(req: Request) {
-  let body: IntakeBody;
+  let raw: unknown;
   try {
-    body = (await req.json()) as IntakeBody;
+    raw = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const report = body?.report;
-  if (!report?.description || report.description.trim().length < 20) {
     return NextResponse.json(
-      { error: "Please provide a description of at least 20 characters." },
+      { kind: "bad_request", error: "Invalid JSON body" },
       { status: 400 },
     );
   }
 
   try {
-    const result = await runIntakeStage(report, {
+    const body = bodySchema.parse(raw);
+    const result = await runIntakeStage(body.report, {
       caseId: body.caseId,
       clarifications: body.clarifications,
       round: body.round,
     });
     return NextResponse.json(result);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return errorResponse(err);
   }
 }

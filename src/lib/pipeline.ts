@@ -9,11 +9,15 @@
 import { runCoordinator } from "./agents/coordinator";
 import { runIntake } from "./agents/intake";
 import { runSpecialist } from "./agents/specialist";
+import type { Usage } from "./llm";
 import { route } from "./router";
 import type { CaseRecord, PipelineResult, ScamReport } from "./types";
 
-/** How many clarification rounds before we proceed regardless. */
-export const MAX_CLARIFICATION_ROUNDS = 2;
+/**
+ * How many clarification rounds before we proceed regardless. Round 1 is the
+ * first extraction, so this allows two returns to the employee (IMP-05).
+ */
+export const MAX_CLARIFICATION_ROUNDS = 3;
 
 export function newCaseId(): string {
   const d = new Date();
@@ -22,13 +26,18 @@ export function newCaseId(): string {
   return `SSA-${stamp}-${rand}`;
 }
 
+export type StageUsage = Record<string, Usage>;
+
 export interface IntakeResult {
   caseRecord: CaseRecord;
   /** True when the workflow should pause and return to the employee. */
   needsClarification: boolean;
   clarificationReason: string | null;
   round: number;
+  /** Rule-based urgency rules that matched (DEF-04); empty if none. */
+  urgencyRulesFired: string[];
   timingMs: Record<string, number>;
+  usage: StageUsage;
 }
 
 /**
@@ -42,7 +51,7 @@ export async function runIntakeStage(
 ): Promise<IntakeResult> {
   const round = opts.round ?? 1;
   const start = performance.now();
-  const caseRecord = await runIntake(
+  const { record: caseRecord, usage, urgencyRulesFired } = await runIntake(
     report,
     opts.caseId ?? newCaseId(),
     opts.clarifications,
@@ -59,20 +68,29 @@ export async function runIntakeStage(
     clarificationReason =
       "Information is missing, but the case is high urgency — fast-tracked without waiting for clarification.";
   } else if (missing && round >= MAX_CLARIFICATION_ROUNDS) {
-    clarificationReason = `Information is still missing after ${round} rounds — proceeding so the employee is not blocked.`;
+    clarificationReason = `Information is still missing after ${round - 1} clarification round(s) — proceeding so the employee is not blocked.`;
   } else if (missing) {
     needsClarification = true;
     clarificationReason =
       "Information is missing and the case is not high urgency — returned to the employee for clarification.";
   }
 
-  return { caseRecord, needsClarification, clarificationReason, round, timingMs };
+  return {
+    caseRecord,
+    needsClarification,
+    clarificationReason,
+    round,
+    urgencyRulesFired,
+    timingMs,
+    usage: { intake: usage },
+  };
 }
 
 /** Stages 3–5, from an already-structured case record. */
 export async function runAnalysisStages(
   caseRecord: CaseRecord,
   timingMs: Record<string, number> = {},
+  usage: StageUsage = {},
 ): Promise<PipelineResult> {
   const t = (label: string, start: number) =>
     (timingMs[label] = Math.round(performance.now() - start));
@@ -82,18 +100,25 @@ export async function runAnalysisStages(
   t("routing", s);
 
   s = performance.now();
-  const findings = await Promise.all(
+  const specialistResults = await Promise.all(
     routing.activatedAgents.map((agent) =>
       runSpecialist(agent, routing.filteredViews[agent]),
     ),
   );
   t("specialists", s);
+  const findings = specialistResults.map((r) => r.finding);
+  for (const r of specialistResults) usage[`specialist:${r.finding.agent}`] = r.usage;
 
   s = performance.now();
-  const assessment = await runCoordinator(caseRecord, routing, findings);
+  const { assessment, usage: coordUsage } = await runCoordinator(
+    caseRecord,
+    routing,
+    findings,
+  );
   t("coordinator", s);
+  usage.coordinator = coordUsage;
 
-  return { caseRecord, routing, findings, assessment, timingMs };
+  return { caseRecord, routing, findings, assessment, timingMs, usage };
 }
 
 /** Convenience: whole pipeline with no clarification pause (used by tests/scripts). */
@@ -101,5 +126,5 @@ export async function runPipeline(report: ScamReport): Promise<PipelineResult> {
   const intake = await runIntakeStage(report, {
     round: MAX_CLARIFICATION_ROUNDS,
   });
-  return runAnalysisStages(intake.caseRecord, intake.timingMs);
+  return runAnalysisStages(intake.caseRecord, intake.timingMs, intake.usage);
 }
