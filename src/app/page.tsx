@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { newEvent, type AuditEvent } from "@/lib/audit";
 import type { IntakeResult } from "@/lib/pipeline";
 import { SAMPLE_CASES } from "@/lib/sampleCases";
@@ -123,6 +123,8 @@ export default function Home() {
   const [auditByCase, setAuditByCase] = useState<Record<string, AuditEvent[]>>({});
 
   const busy = phase.kind === "intake" || phase.kind === "analysing";
+  /** Synchronous guard against double submission before React re-renders. */
+  const inFlight = useRef(false);
 
   function audit(e: AuditEvent) {
     setAuditByCase((m) => ({ ...m, [e.caseId]: [...(m[e.caseId] ?? []), e] }));
@@ -147,6 +149,8 @@ export default function Home() {
 
   /** Stage 2. Pauses at the clarification screen if the record has gaps. */
   async function runIntake(r: ScamReport, opts: IntakeOpts = {}) {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setPhase({ kind: "intake" });
     try {
       const intake = await postJson<IntakeResult>("/api/intake", {
@@ -196,11 +200,15 @@ export default function Home() {
         retryable,
         failed: { step: "intake", report: r, opts },
       });
+    } finally {
+      inFlight.current = false;
     }
   }
 
   /** Stages 3–5. */
   async function runAnalysis(intake: IntakeResult) {
+    if (inFlight.current && phase.kind === "analysing") return;
+    inFlight.current = true;
     setPhase({ kind: "analysing", intake });
     try {
       const result = await postJson<PipelineResult>("/api/analyse", {
@@ -225,6 +233,8 @@ export default function Home() {
         retryable,
         failed: { step: "analyse", intake },
       });
+    } finally {
+      inFlight.current = false;
     }
   }
 

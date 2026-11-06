@@ -9,6 +9,13 @@ import { ConfigError, InvalidReportError, ModelOutputError } from "./llm";
  */
 export function errorResponse(err: unknown) {
   if (err instanceof ZodError) {
+    // A single problem with a form field reads better without the path.
+    if (err.issues.length === 1 && /description$/.test(err.issues[0].path.join("."))) {
+      return NextResponse.json(
+        { kind: "bad_request", error: err.issues[0].message },
+        { status: 400 },
+      );
+    }
     const issues = err.issues
       .slice(0, 5)
       .map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`)
