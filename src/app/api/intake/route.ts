@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { errorResponse } from "@/lib/apiErrors";
+import { MAX_COMBINED_CLARIFICATIONS } from "@/lib/clarifications";
 import { runIntakeStage } from "@/lib/pipeline";
 import { scamReportSchema } from "@/lib/schemas";
 
@@ -9,7 +10,8 @@ export const maxDuration = 60;
 const bodySchema = z.object({
   report: scamReportSchema,
   caseId: z.string().regex(/^SSA-\d{8}-[A-Z0-9]{4}$/).optional(),
-  clarifications: z.string().max(5000).optional(),
+  // Answers from every round so far, combined on the client.
+  clarifications: z.string().max(MAX_COMBINED_CLARIFICATIONS).optional(),
   round: z.number().int().min(1).max(10).optional(),
 });
 
