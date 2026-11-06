@@ -122,7 +122,7 @@ export const scamReportSchema = z.object({
   contactMethod: contactMethodSchema.default("unknown"),
   suspectedScamType: scamTypeSchema.default("unknown"),
   financialLossReported: z.boolean().default(false),
-  financialLossAmount: z.number().nonnegative().optional(),
+  financialLossAmount: z.number().nonnegative().nullable().optional(),
   informationDisclosed: strArr,
   incidentOngoing: z.boolean().default(false),
   reportingOrganisation: str.default("Unknown organisation"),

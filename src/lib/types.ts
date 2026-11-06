@@ -42,7 +42,7 @@ export interface ScamReport {
   contactMethod: ContactMethod;
   suspectedScamType: SuspectedScamType;
   financialLossReported: boolean;
-  financialLossAmount?: number; // AUD, if known
+  financialLossAmount?: number | null; // AUD, if known
   informationDisclosed: string[]; // e.g. ["bank login", "one-time code"]
   incidentOngoing: boolean;
   reportingOrganisation: string; // which Alliance member took the report
